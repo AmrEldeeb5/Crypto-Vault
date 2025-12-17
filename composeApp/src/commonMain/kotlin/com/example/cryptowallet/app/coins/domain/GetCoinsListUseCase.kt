@@ -1,12 +1,11 @@
-package com.example.cryptowallet.app.coins.domain.api
+package com.example.cryptowallet.app.coins.domain
 
-import com.example.cryptowallet.app.coins.data.remote.dto.toCoinModel
-import com.example.cryptowallet.app.coins.domain.CoinsRemoteDataSource
+import com.example.cryptowallet.app.coins.domain.api.CoinsRemoteDataSource
 import com.example.cryptowallet.app.coins.domain.model.CoinModel
 import com.example.cryptowallet.app.core.domain.DataError
 import com.example.cryptowallet.app.core.domain.Result
 import com.example.cryptowallet.app.core.domain.map
-
+import com.example.cryptowallet.app.mapper.toCoinModel
 
 class GetCoinsListUseCase(
     private val client: CoinsRemoteDataSource,

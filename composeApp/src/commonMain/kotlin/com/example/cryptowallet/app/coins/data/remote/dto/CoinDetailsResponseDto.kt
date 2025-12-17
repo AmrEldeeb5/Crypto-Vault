@@ -23,3 +23,4 @@ data class CoinDetailsDto(
     val rank: Int,
     val change: Double
 )
+

@@ -3,7 +3,7 @@ package com.example.cryptowallet.app.coins.data.remote.impl
 import com.example.cryptowallet.app.coins.data.remote.dto.CoinDetailsResponseDto
 import com.example.cryptowallet.app.coins.data.remote.dto.CoinPriceHistoryResponseDto
 import com.example.cryptowallet.app.coins.data.remote.dto.CoinResponseDto
-import com.example.cryptowallet.app.coins.domain.CoinsRemoteDataSource
+import com.example.cryptowallet.app.coins.domain.api.CoinsRemoteDataSource
 import com.example.cryptowallet.app.core.domain.DataError
 import com.example.cryptowallet.app.core.domain.Result
 import com.example.cryptowallet.app.core.network.safeCall
