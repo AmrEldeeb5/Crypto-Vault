@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.cryptowallet.app.coins.presentation.CoinsListScreen
 import com.example.cryptowallet.theme.CoinRoutineTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -24,6 +25,6 @@ import cryptowallet.composeapp.generated.resources.compose_multiplatform
 @Preview
 fun App() {
     CoinRoutineTheme {
-
+        CoinsListScreen {  }
     }
 }

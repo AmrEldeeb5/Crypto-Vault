@@ -29,13 +29,14 @@ import coil3.compose.AsyncImage
 import com.example.cryptowallet.theme.LocalCoinRoutineColorsPalette
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun CoinsListScreen(
     onCoinClicked: (String) -> Unit,
 ) {
-    val coinsListViewModel = viewModel(CoinsListViewModel::class) // Todo: we need to change this after we implement DI
+    val coinsListViewModel = koinViewModel<CoinsListViewModel>()
     val state by coinsListViewModel.state.collectAsStateWithLifecycle()
 
     CoinsListContent(
