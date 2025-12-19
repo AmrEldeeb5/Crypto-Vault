@@ -18,7 +18,6 @@ class CoinsListViewModel(
     private val _state = MutableStateFlow(CoinsState())
     val state = _state
         .onStart {
-            // onStart is suspend, but we don't want to block collection; also keeps cancellation tied to ViewModel.
             viewModelScope.launch {
                 getAllCoins()
             }
@@ -29,18 +28,21 @@ class CoinsListViewModel(
         )
 
     private suspend fun getAllCoins() {
+        _state.update { it.copy(isLoading = true, error = null) }
+        
         when (val coinsResponse = getCoinsListUseCase.execute()) {
             is Result.Success -> {
                 _state.update {
                     CoinsState(
+                        isLoading = false,
                         coins = coinsResponse.data.map { coinItem ->
                             UiCoinListItem(
                                 id = coinItem.coin.id,
                                 name = coinItem.coin.name,
                                 iconUrl = coinItem.coin.iconUrl,
                                 symbol = coinItem.coin.symbol,
-                                formattedPrice = coinItem.price.toString(), //TODO: formatFiat(coinItem.price),
-                                formattedChange = coinItem.change.toString(), //TODO: formatPercentage(coinItem.change),
+                                formattedPrice = coinItem.price.toString(),
+                                formattedChange = coinItem.change.toString(),
                                 isPositive = coinItem.change >= 0,
                             )
                         }
@@ -51,8 +53,9 @@ class CoinsListViewModel(
             is Result.Failure -> {
                 _state.update {
                     it.copy(
+                        isLoading = false,
                         coins = emptyList(),
-                        error = null //TODO: coinsResponse.error.toUiText()
+                        error = "Error: ${coinsResponse.error.message}"
                     )
                 }
             }

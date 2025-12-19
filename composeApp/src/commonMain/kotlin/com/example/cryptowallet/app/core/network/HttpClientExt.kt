@@ -21,6 +21,8 @@ suspend inline fun <reified T> safeCall(
         return Result.Failure(DataError.Remote.NO_INTERNET)
     } catch (e: Exception){
         currentCoroutineContext().ensureActive()
+        println("Network error: ${e.message}")
+        e.printStackTrace()
         return Result.Failure(DataError.Remote.UNKNOWN_ERROR)
     }
 
@@ -36,12 +38,21 @@ suspend inline fun <reified T> responseToResult(
                 Result.Success(response.body<T>())
             }
             catch (e: Exception){
+                println("Parsing error: ${e.message}")
+                e.printStackTrace()
                 Result.Failure(DataError.Remote.UNKNOWN_ERROR)
             }
+        }
+        401 -> {
+            println("Unauthorized - check API key")
+            Result.Failure(DataError.Remote.UNKNOWN_ERROR)
         }
         408 -> Result.Failure(DataError.Remote.REQUEST_TIMEOUT)
         429 -> Result.Failure(DataError.Remote.TOO_MANY_REQUESTS)
         in 500..599 -> Result.Failure(DataError.Remote.SERVER_ERROR)
-        else -> Result.Failure(DataError.Remote.UNKNOWN_ERROR)
+        else -> {
+            println("HTTP error: ${response.status.value}")
+            Result.Failure(DataError.Remote.UNKNOWN_ERROR)
+        }
     }
 }

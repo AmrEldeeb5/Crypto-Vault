@@ -53,12 +53,32 @@ fun CoinsListContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
-        CoinsList(
-            coins = state.coins,
-            onCoinClicked = onCoinClicked
-        )
+        when {
+            state.isLoading -> {
+                androidx.compose.material3.CircularProgressIndicator()
+            }
+            state.error != null -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = state.error,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    )
+                }
+            }
+            else -> {
+                CoinsList(
+                    coins = state.coins,
+                    onCoinClicked = onCoinClicked
+                )
+            }
+        }
     }
 }
 

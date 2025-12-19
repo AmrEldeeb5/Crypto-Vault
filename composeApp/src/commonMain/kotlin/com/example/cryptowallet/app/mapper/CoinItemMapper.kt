@@ -12,10 +12,10 @@ fun CoinItemDto.toCoinModel() = CoinModel(
         id = uuid,
         name = name,
         symbol = symbol,
-        iconUrl = iconUrl,
+        iconUrl = iconUrl ?: "",
     ),
-    price = price,
-    change = change,
+    price = price?.toDoubleOrNull() ?: 0.0,
+    change = change?.toDoubleOrNull() ?: 0.0,
 )
 
 fun CoinPriceHistoryDto.toPriceModel() = PriceModel(
