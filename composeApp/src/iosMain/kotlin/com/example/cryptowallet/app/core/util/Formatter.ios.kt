@@ -36,7 +36,8 @@ actual fun formatCoinUnit(amount: Double, symbol: String): String {
     numberFormatter.minimumFractionDigits = 8.toULong()
     numberFormatter.maximumFractionDigits = 8.toULong()
 
-    return numberFormatter.stringFromNumber(NSNumber(amount)) + " $symbol"
+    val formattedAmount = numberFormatter.stringFromNumber(NSNumber(amount))
+    return if (formattedAmount != null) "$formattedAmount $symbol" else "0.00000000 $symbol"
 }
 
 actual fun formatPercentage(amount: Double): String {
@@ -46,5 +47,6 @@ actual fun formatPercentage(amount: Double): String {
     numberFormatter.maximumFractionDigits = 2.toULong()
     val prefix = if (amount >= 0) "+" else ""
 
-    return prefix + numberFormatter.stringFromNumber(NSNumber(amount)) + " %"
+    val formattedAmount = numberFormatter.stringFromNumber(NSNumber(amount))
+    return if (formattedAmount != null) "$prefix$formattedAmount %" else "${prefix}0.00 %"
 }
