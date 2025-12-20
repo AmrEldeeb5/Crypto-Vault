@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptowallet.app.coins.domain.GetCoinsListUseCase
 import com.example.cryptowallet.app.core.domain.Result
+import com.example.cryptowallet.app.core.util.formatFiat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -41,8 +42,8 @@ class CoinsListViewModel(
                                 name = coinItem.coin.name,
                                 iconUrl = coinItem.coin.iconUrl,
                                 symbol = coinItem.coin.symbol,
-                                formattedPrice = coinItem.price.toString(),
-                                formattedChange = coinItem.change.toString(),
+                                formattedPrice = formatFiat(coinItem.price),
+                                formattedChange = formatFiat(coinItem.change, showDecimal = false),
                                 isPositive = coinItem.change >= 0,
                             )
                         }
