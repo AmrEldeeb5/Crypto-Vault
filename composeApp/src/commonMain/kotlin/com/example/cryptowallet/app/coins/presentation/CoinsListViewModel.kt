@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.cryptowallet.app.coins.domain.GetCoinsListUseCase
 import com.example.cryptowallet.app.core.domain.Result
 import com.example.cryptowallet.app.core.util.formatFiat
+import com.example.cryptowallet.app.core.util.toUiText
+import cryptowallet.composeapp.generated.resources.Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -56,7 +58,7 @@ class CoinsListViewModel(
                     it.copy(
                         isLoading = false,
                         coins = emptyList(),
-                        error = "Error: ${coinsResponse.error.message}"
+                        error = coinsResponse.error.toUiText()
                     )
                 }
             }
