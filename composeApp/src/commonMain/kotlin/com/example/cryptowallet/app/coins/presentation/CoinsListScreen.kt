@@ -70,33 +70,30 @@ fun CoinsListContent(
             .windowInsetsPadding(WindowInsets.safeDrawing),
         contentAlignment = Alignment.Center
     ) {
-        when {
-            state.isLoading -> {
-                CircularProgressIndicator()
+        if (state.isLoading) {
+            CircularProgressIndicator()
+        } else if (state.error != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(state.error),
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                )
             }
-            state.error != null -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(state.error),
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    )
-                }
-            }
-            state.chartState != null -> {
+        } else {
+            CoinsList(
+                coins = state.coins,
+                onCoinLongPressed = onCoinLongPressed,
+                onCoinClicked = onCoinClicked
+            )
+            
+            if (state.chartState != null) {
                 CoinChartDialog(
                     uiChartState = state.chartState,
                     onDismiss = onDismissChart
-                )
-            }
-            else -> {
-                CoinsList(
-                    coins = state.coins,
-                    onCoinLongPressed = onCoinLongPressed,
-                    onCoinClicked = onCoinClicked
                 )
             }
         }
