@@ -1,7 +1,9 @@
 package com.example.cryptowallet.app.coins.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,12 +48,16 @@ fun CoinsListScreen(
 
     CoinsListContent(
         state = state,
+        onDismissChart = { coinsListViewModel.onDismissChart() },
+        onCoinLongPressed = { coinId -> coinsListViewModel.onCoinLongPressed(coinId) },
         onCoinClicked = onCoinClicked
     )
 }
 @Composable
 fun CoinsListContent(
     state: CoinsState,
+    onDismissChart: () -> Unit,
+    onCoinLongPressed: (String) -> Unit,
     onCoinClicked: (String) -> Unit,
 ) {
     Box(
@@ -76,9 +82,16 @@ fun CoinsListContent(
                     )
                 }
             }
+            state.chartState != null -> {
+                CoinChartDialog(
+                    uiChartState = state.chartState,
+                    onDismiss = onDismissChart
+                )
+            }
             else -> {
                 CoinsList(
                     coins = state.coins,
+                    onCoinLongPressed = onCoinLongPressed,
                     onCoinClicked = onCoinClicked
                 )
             }
@@ -89,6 +102,7 @@ fun CoinsListContent(
 @Composable
 fun CoinsList(
     coins: List<UiCoinListItem>,
+    onCoinLongPressed: (String) -> Unit,
     onCoinClicked: (String) -> Unit,
 ) {
     Box(
@@ -111,6 +125,7 @@ fun CoinsList(
             items(coins) { coin ->
                 CoinListItem(
                     coin = coin,
+                    onCoinLongPressed = onCoinLongPressed,
                     onCoinClicked = onCoinClicked
                 )
             }
@@ -118,16 +133,21 @@ fun CoinsList(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CoinListItem(
     coin: UiCoinListItem,
+    onCoinLongPressed: (String) -> Unit,
     onCoinClicked: (String) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onCoinClicked(coin.id) }
+            .combinedClickable(
+                onLongClick = { onCoinLongPressed(coin.id) },
+                onClick = { onCoinClicked(coin.id) }
+            )
             .padding(16.dp)
     ) {
         AsyncImage(
