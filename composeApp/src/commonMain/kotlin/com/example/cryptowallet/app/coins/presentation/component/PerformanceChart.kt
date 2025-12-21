@@ -3,7 +3,9 @@ package com.example.cryptowallet.app.coins.presentation.component
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -22,20 +24,47 @@ fun PerformanceChart(
     val min = nodes.minOrNull() ?: return
     val lineColor = if (nodes.last() > nodes.first()) profitColor else lossColor
 
+    val transparentGraphColor = remember(lineColor) {
+        lineColor.copy(alpha = 0.5f)
+    }
+
     Canvas(
         modifier = modifier.fillMaxSize()
     ) {
         val path = Path()
+        val fillPath = Path()
+        
+        val width = size.width
+        val height = size.height
+
         nodes.forEachIndexed { index, value ->
-            val x = index * (size.width / (nodes.size - 1))
-            val y = size.height * (1 - ((value - min) / (max - min)).toFloat())
+            val x = index * (width / (nodes.size - 1))
+            val y = height * (1 - ((value - min) / (max - min)).toFloat())
 
             if (index == 0) {
                 path.moveTo(x, y)
+                fillPath.moveTo(x, height)
+                fillPath.lineTo(x, y)
             } else {
                 path.lineTo(x, y)
+                fillPath.lineTo(x, y)
             }
         }
+        
+        fillPath.lineTo(width, height)
+        fillPath.close()
+
+        drawPath(
+            path = fillPath,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    transparentGraphColor,
+                    Color.Transparent
+                ),
+                endY = size.height * 0.5f // Fade out halfway down
+            )
+        )
+
         drawPath(
             path = path,
             color = lineColor,

@@ -17,4 +17,5 @@ data class UiChartState(
     val sparkLine: List<Double> = emptyList(),
     val isLoading: Boolean = false,
     val coinName: String = "",
+    val error: String? = null
 )

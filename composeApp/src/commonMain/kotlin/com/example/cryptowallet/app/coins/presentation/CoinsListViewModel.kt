@@ -68,11 +68,13 @@ class CoinsListViewModel(
     }
 
     fun onCoinLongPressed(coinId: String) {
+        val coinName = _state.value.coins.find { it.id == coinId }?.name.orEmpty()
         _state.update {
             it.copy(
                 chartState = UiChartState(
                     sparkLine = emptyList(),
                     isLoading = true,
+                    coinName = coinName
                 )
             )
         }
@@ -86,7 +88,7 @@ class CoinsListViewModel(
                                 sparkLine = priceHistory.data.sortedBy { it.timestamp }
                                     .map { it.price },
                                 isLoading = false,
-                                coinName = _state.value.coins.find { it.id == coinId }?.name.orEmpty(),
+                                coinName = coinName,
                             )
                         )
                     }
@@ -98,7 +100,8 @@ class CoinsListViewModel(
                             chartState = UiChartState(
                                 sparkLine = emptyList(),
                                 isLoading = false,
-                                coinName = "",
+                                coinName = coinName,
+                                error = "Could not load chart data"
                             )
                         )
                     }

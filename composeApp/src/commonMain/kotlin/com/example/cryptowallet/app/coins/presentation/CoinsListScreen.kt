@@ -213,6 +213,16 @@ fun CoinChartDialog(
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(32.dp))
                 }
+            } else if (uiChartState.error != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = uiChartState.error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             } else {
                 PerformanceChart(
                     modifier = Modifier

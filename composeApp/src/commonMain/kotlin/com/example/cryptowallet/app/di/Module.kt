@@ -40,7 +40,6 @@ val sharedModule = module {
     single { GetCoinPriceHistoryUseCase(get()) }
     single { GetCoinDetailsUseCase(get()) }
 
-
     // view models
     //viewModelOf(::CoinsListViewModel)
     viewModel { CoinsListViewModel(get(), get())  }
