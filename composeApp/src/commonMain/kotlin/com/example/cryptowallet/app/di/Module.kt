@@ -6,6 +6,8 @@ import com.example.cryptowallet.app.coins.domain.usecase.GetCoinPriceHistoryUseC
 import com.example.cryptowallet.app.coins.domain.usecase.GetCoinsListUseCase
 import com.example.cryptowallet.app.coins.domain.api.CoinsRemoteDataSource
 import com.example.cryptowallet.app.coins.presentation.CoinsListViewModel
+import com.example.cryptowallet.app.core.database.portfolio.PortfolioDatabase
+import com.example.cryptowallet.app.core.database.portfolio.getPortfolioDatabase
 import com.example.cryptowallet.app.core.network.HttpClientFactory
 import io.ktor.client.HttpClient
 import org.koin.core.context.startKoin
@@ -34,6 +36,10 @@ val sharedModule = module {
 
     // data sources
     single<CoinsRemoteDataSource> { KtorCoinsRemoteDataSource(get()) }
+
+    // portfolio
+    single { getPortfolioDatabase(get()) }
+    single { get<PortfolioDatabase>().portfolioDao() }
 
     // use cases
     single { GetCoinsListUseCase(get()) }
