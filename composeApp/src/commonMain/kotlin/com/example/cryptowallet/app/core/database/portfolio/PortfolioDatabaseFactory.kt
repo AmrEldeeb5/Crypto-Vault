@@ -1,7 +1,6 @@
 package com.example.cryptowallet.app.core.database.portfolio
 
 import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
