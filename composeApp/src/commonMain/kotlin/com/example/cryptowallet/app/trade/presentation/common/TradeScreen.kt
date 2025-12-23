@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.example.cryptowallet.app.trade.presentation.common.component.rememberCurrencyVisualTransformation
 import com.example.cryptowallet.theme.LocalCoinRoutineColorsPalette
 import org.jetbrains.compose.resources.stringResource
 
@@ -147,6 +148,8 @@ fun CenteredDollarTextField(
         focusRequester.requestFocus()
     }
 
+    val currencyVisualTransformation = rememberCurrencyVisualTransformation()
+
     val displayText = amountText.trimStart('$')
 
     BasicTextField(
@@ -176,7 +179,8 @@ fun CenteredDollarTextField(
                 innerTextField()
             }
         },
-        cursorBrush = SolidColor(Color.White)
+        cursorBrush = SolidColor(Color.White),
+        visualTransformation = currencyVisualTransformation,
     )
 }
 
