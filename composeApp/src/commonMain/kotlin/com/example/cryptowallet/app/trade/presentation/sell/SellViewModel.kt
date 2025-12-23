@@ -89,26 +89,25 @@ class SellViewModel(
                 }
             }
         }
-
-        fun onSellClicked() {
-            val tradeCoin = state.value.coin ?: return
-            viewModelScope.launch {
-                val sellCoinResponse = sellCoinUseCase.sellCoin(
-                    coin = tradeCoin.toCoin(),
-                    amountInFiat = _amount.value.toDouble(),
-                    price = tradeCoin.price
-                )
-                when (sellCoinResponse) {
-                    is Result.Success -> {
-                        // TODO: add event and navigation
-                    }
-                    is Result.Failure -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                error = sellCoinResponse.error.toUiText()
-                            )
-                        }
+    }
+    fun onSellClicked() {
+        val tradeCoin = state.value.coin ?: return
+        viewModelScope.launch {
+            val sellCoinResponse = sellCoinUseCase.sellCoin(
+                coin = tradeCoin.toCoin(),
+                amountInFiat = _amount.value.toDouble(),
+                price = tradeCoin.price
+            )
+            when (sellCoinResponse) {
+                is Result.Success -> {
+                    // TODO: add event and navigation
+                }
+                is Result.Failure -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = sellCoinResponse.error.toUiText()
+                        )
                     }
                 }
             }
