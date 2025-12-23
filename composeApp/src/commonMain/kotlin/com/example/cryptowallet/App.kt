@@ -18,6 +18,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
 import coil3.svg.SvgDecoder
 import com.example.cryptowallet.app.coins.presentation.CoinsListScreen
+import com.example.cryptowallet.app.navigation.Navigation
 import com.example.cryptowallet.theme.CoinRoutineTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -38,6 +39,6 @@ fun App() {
     }
 
     CoinRoutineTheme {
-        CoinsListScreen {  }
+        Navigation()
     }
 }
