@@ -20,20 +20,20 @@ import com.example.cryptowallet.theme.LocalCryptoSpacing
 import com.example.cryptowallet.theme.LocalCryptoTypography
 
 /**
- * A component for displaying empty states with a call-to-action.
+ * A component for displaying empty states with an optional call-to-action.
  * 
  * @param title The main title text
  * @param description A description explaining the empty state
- * @param actionLabel The label for the action button
- * @param onAction Callback when the action button is clicked
+ * @param actionLabel The label for the action button (null to hide button)
+ * @param onAction Callback when the action button is clicked (null to hide button)
  * @param modifier Modifier for the component
  */
 @Composable
 fun EmptyState(
     title: String,
     description: String,
-    actionLabel: String,
-    onAction: () -> Unit,
+    actionLabel: String?,
+    onAction: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalCryptoColors.current
@@ -76,19 +76,21 @@ fun EmptyState(
             textAlign = TextAlign.Center
         )
         
-        Spacer(modifier = Modifier.height(spacing.lg))
-        
-        // Action button
-        Button(
-            onClick = onAction,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.buttonPrimary
-            )
-        ) {
-            Text(
-                text = actionLabel,
-                style = typography.labelLarge
-            )
+        // Action button (only if both label and action are provided)
+        if (actionLabel != null && onAction != null) {
+            Spacer(modifier = Modifier.height(spacing.lg))
+            
+            Button(
+                onClick = onAction,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.buttonPrimary
+                )
+            ) {
+                Text(
+                    text = actionLabel,
+                    style = typography.labelLarge
+                )
+            }
         }
     }
 }

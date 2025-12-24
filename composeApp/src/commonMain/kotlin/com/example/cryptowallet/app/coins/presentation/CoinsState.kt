@@ -12,8 +12,19 @@ data class CoinsState(
     val error: StringResource? = null,
     val coins: List<UiCoinListItem> = emptyList(),
     val chartState: UiChartState? = null,
-    val connectionState: ConnectionState = ConnectionState.DISCONNECTED
-)
+    val connectionState: ConnectionState = ConnectionState.DISCONNECTED,
+    val searchQuery: String = ""
+) {
+    val filteredCoins: List<UiCoinListItem>
+        get() = if (searchQuery.isBlank()) {
+            coins
+        } else {
+            coins.filter { coin ->
+                coin.name.contains(searchQuery, ignoreCase = true) ||
+                coin.symbol.contains(searchQuery, ignoreCase = true)
+            }
+        }
+}
 
 @Stable
 data class UiChartState(

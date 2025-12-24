@@ -16,6 +16,9 @@ import com.example.cryptowallet.app.realtime.domain.PriceDirection
  * @param priceDirection Direction of price movement for animation
  * @param holdingsAmount Optional formatted holdings amount (e.g., "0.5 BTC")
  * @param holdingsValue Optional formatted holdings value (e.g., "$22,500.00")
+ * @param marketCap Optional formatted market cap (e.g., "$850B")
+ * @param volume24h Optional formatted 24h volume (e.g., "$25B")
+ * @param isInWatchlist Whether the coin is in user's watchlist
  */
 data class UiCoinItem(
     val id: String,
@@ -27,7 +30,10 @@ data class UiCoinItem(
     val isPositive: Boolean,
     val priceDirection: PriceDirection,
     val holdingsAmount: String? = null,
-    val holdingsValue: String? = null
+    val holdingsValue: String? = null,
+    val marketCap: String? = null,
+    val volume24h: String? = null,
+    val isInWatchlist: Boolean = false
 ) {
     /**
      * Returns true if this coin has holdings information to display.

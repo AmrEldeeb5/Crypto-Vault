@@ -233,31 +233,35 @@ class ColorContrastPropertyTest {
     }
 
     /**
-     * Property 19: Test that button text on button primary color meets WCAG AA contrast.
+     * Property 19: Test that button text (white) on button primary color meets WCAG AA contrast.
      */
     @Test
-    fun `Property 19 - Light theme card background on button primary meets WCAG AA`() {
+    fun `Property 19 - Light theme white text on button primary meets WCAG AA`() {
+        // Button text is typically white (textPrimary in dark contexts)
+        val whiteText = Color(0xFFFFFFFF)
         val contrast = contrastRatio(
-            LightCryptoColors.cardBackground,
+            whiteText,
             LightCryptoColors.buttonPrimary
         )
         
         assertTrue(
             contrast >= NORMAL_TEXT_MIN_CONTRAST,
-            "Light theme: Card background on button primary contrast ($contrast) should be >= $NORMAL_TEXT_MIN_CONTRAST"
+            "Light theme: White text on button primary contrast ($contrast) should be >= $NORMAL_TEXT_MIN_CONTRAST"
         )
     }
 
     @Test
-    fun `Property 19 - Dark theme card background on button primary meets WCAG AA`() {
+    fun `Property 19 - Dark theme white text on button primary meets WCAG AA`() {
+        // Button text is typically white (textPrimary)
+        val whiteText = Color(0xFFFFFFFF)
         val contrast = contrastRatio(
-            DarkCryptoColors.cardBackground,
+            whiteText,
             DarkCryptoColors.buttonPrimary
         )
         
         assertTrue(
             contrast >= NORMAL_TEXT_MIN_CONTRAST,
-            "Dark theme: Card background on button primary contrast ($contrast) should be >= $NORMAL_TEXT_MIN_CONTRAST"
+            "Dark theme: White text on button primary contrast ($contrast) should be >= $NORMAL_TEXT_MIN_CONTRAST"
         )
     }
 

@@ -26,6 +26,8 @@ import com.example.cryptowallet.app.trade.domain.BuyCoinUseCase
 import com.example.cryptowallet.app.trade.domain.SellCoinUseCase
 import com.example.cryptowallet.app.trade.presentation.buy.BuyViewModel
 import com.example.cryptowallet.app.trade.presentation.sell.SellViewModel
+import com.example.cryptowallet.app.watchlist.data.WatchlistRepositoryImpl
+import com.example.cryptowallet.app.watchlist.domain.WatchlistRepository
 import io.ktor.client.HttpClient
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -61,6 +63,10 @@ val sharedModule = module {
     single { get<PortfolioDatabase>().portfolioDao() }
     single { get<PortfolioDatabase>().UserBalanceDao() }
     singleOf(::PortfolioRepositoryImpl).bind<PortfolioRepository>()
+
+    // watchlist
+    single { get<PortfolioDatabase>().watchlistDao() }
+    singleOf(::WatchlistRepositoryImpl).bind<WatchlistRepository>()
 
     // real-time price updates (CoinCap WebSocket API)
     single<ReconnectionStrategy> { ExponentialBackoffStrategy() }

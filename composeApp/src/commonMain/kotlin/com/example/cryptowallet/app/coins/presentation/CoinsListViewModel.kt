@@ -176,4 +176,16 @@ class CoinsListViewModel(
             it.copy(chartState = null)
         }
     }
+
+    fun onSearchQueryChange(query: String) {
+        _state.update {
+            it.copy(searchQuery = query)
+        }
+    }
+
+    fun onClearSearch() {
+        _state.update {
+            it.copy(searchQuery = "")
+        }
+    }
 }
