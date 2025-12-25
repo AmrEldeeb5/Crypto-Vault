@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.example.cryptowallet.theme.LocalCryptoAccessibility
 import com.example.cryptowallet.theme.LocalCryptoColors
 import kotlin.random.Random
 
@@ -36,6 +37,7 @@ fun OnboardingBackground(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalCryptoColors.current
+    val accessibility = LocalCryptoAccessibility.current
     
     Box(
         modifier = modifier
@@ -48,7 +50,8 @@ fun OnboardingBackground(
             offsetX = -100,
             offsetY = -50,
             size = 300,
-            animationDuration = 4000
+            animationDuration = 4000,
+            reduceMotion = accessibility.reduceMotion
         )
         
         GradientBlob(
@@ -56,7 +59,8 @@ fun OnboardingBackground(
             offsetX = 200,
             offsetY = 500,
             size = 350,
-            animationDuration = 5000
+            animationDuration = 5000,
+            reduceMotion = accessibility.reduceMotion
         )
         
         GradientBlob(
@@ -64,16 +68,20 @@ fun OnboardingBackground(
             offsetX = 50,
             offsetY = 300,
             size = 250,
-            animationDuration = 4500
+            animationDuration = 4500,
+            reduceMotion = accessibility.reduceMotion
         )
         
-        // Floating crypto symbols
-        FloatingCryptoSymbols()
+        // Floating crypto symbols (skip if reduce motion enabled)
+        if (!accessibility.reduceMotion) {
+            FloatingCryptoSymbols()
+        }
     }
 }
 
 /**
  * Pulsing gradient blob with blur effect.
+ * When reduceMotion is enabled, displays static blob without animation.
  */
 @Composable
 private fun GradientBlob(
@@ -81,18 +89,23 @@ private fun GradientBlob(
     offsetX: Int,
     offsetY: Int,
     size: Int,
-    animationDuration: Int
+    animationDuration: Int,
+    reduceMotion: Boolean = false
 ) {
-    val infiniteTransition = rememberInfiniteTransition()
-    
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 1.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(animationDuration),
-            repeatMode = RepeatMode.Reverse
+    val scale = if (reduceMotion) {
+        1f // Static scale when reduce motion is enabled
+    } else {
+        val infiniteTransition = rememberInfiniteTransition()
+        val animatedScale by infiniteTransition.animateFloat(
+            initialValue = 0.8f,
+            targetValue = 1.2f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(animationDuration),
+                repeatMode = RepeatMode.Reverse
+            )
         )
-    )
+        animatedScale
+    }
     
     Box(
         modifier = Modifier

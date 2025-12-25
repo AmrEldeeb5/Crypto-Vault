@@ -111,6 +111,7 @@ internal fun CoinRoutineTheme(
         LocalCryptoTypography provides cryptoTypography,
         LocalCryptoSpacing provides cryptoSpacing,
         LocalCryptoShapes provides cryptoShapes,
+        LocalCryptoAccessibility provides CryptoAccessibility(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
