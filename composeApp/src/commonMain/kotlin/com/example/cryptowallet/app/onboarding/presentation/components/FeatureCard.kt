@@ -81,8 +81,8 @@ fun FeatureCard(
             .fillMaxWidth()
             .alpha(alpha)
             .clip(cardShape)
-            // React: bg-slate-800/30 border border-slate-700/50
-            .background(SlateBackground.copy(alpha = 0.3f))
+            // React: bg-slate-800/30 - more transparent/darker
+            .background(SlateBackground.copy(alpha = 0.2f))
             .border(
                 width = 1.dp,
                 color = SlateBorder.copy(alpha = 0.5f),
@@ -169,8 +169,8 @@ fun CompactFeatureCard(
             .fillMaxWidth()
             .alpha(alpha)
             .clip(cardShape)
-            // React: bg-slate-800/50 border border-slate-700/50
-            .background(SlateBackground.copy(alpha = 0.5f))
+            // React: bg-slate-800/50 - more transparent/darker
+            .background(SlateBackground.copy(alpha = 0.3f))
             .border(
                 width = 1.dp,
                 color = SlateBorder.copy(alpha = 0.5f),

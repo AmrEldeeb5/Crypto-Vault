@@ -75,7 +75,7 @@ fun CoinSelectionCard(
     
     val accessibilityDescription = "${coin.name}, ${if (isSelected) "selected" else "not selected"}"
     // React: slate-800 = #1E293B, slate-700 = #334155
-    val slateBackground = Color(0xFF1E293B).copy(alpha = 0.3f)
+    val slateBackground = Color(0xFF1E293B).copy(alpha = 0.2f)
     val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
     
     Box(

@@ -15,11 +15,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,9 +89,11 @@ fun OnboardingScreen(
         
         // Main content
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             // Progress bar at the very top (like React)
             OnboardingProgressBar(
@@ -98,8 +103,8 @@ fun OnboardingScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Main content card - React: bg-slate-900/50 backdrop-blur-2xl border border-slate-700/50
-            val slateCardBackground = Color(0xFF0F172A).copy(alpha = 0.5f) // slate-900/50
+            // Main content card - React: bg-slate-900/50 - more transparent/darker
+            val slateCardBackground = Color(0xFF0F172A).copy(alpha = 0.35f) // slate-900 with more transparency
             val slateBorder = Color(0xFF334155).copy(alpha = 0.5f) // slate-700/50
             val cardShape = RoundedCornerShape(24.dp)
             
