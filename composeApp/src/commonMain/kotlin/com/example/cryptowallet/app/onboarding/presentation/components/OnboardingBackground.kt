@@ -195,7 +195,7 @@ private fun FloatingCryptoSymbols() {
                 symbol = symbols[index % symbols.size],
                 x = Random.nextInt(10, 350),
                 y = Random.nextInt(50, 750),
-                size = Random.nextInt(12, 24),
+                size = Random.nextInt(24, 48),
                 alpha = Random.nextFloat() * 0.06f + 0.02f, // 0.02 to 0.08
                 durationY = Random.nextInt(4000, 8000),
                 durationX = Random.nextInt(5000, 10000),

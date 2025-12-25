@@ -1,6 +1,5 @@
 package com.example.cryptowallet.app.onboarding.presentation
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -34,8 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -68,9 +67,9 @@ fun OnboardingScreen(
     onComplete: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
-    val canProceed by viewModel.canProceed.collectAsState()
-    val stepColors by viewModel.currentStepColors.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val canProceed by viewModel.canProceed.collectAsStateWithLifecycle()
+    val stepColors by viewModel.currentStepColors.collectAsStateWithLifecycle()
     
     val colors = LocalCryptoColors.current
     val typography = LocalCryptoTypography.current
@@ -81,11 +80,6 @@ fun OnboardingScreen(
     }
     
     val stepGradient = Brush.horizontalGradient(stepColors)
-    
-    // Handle Android back button
-    BackHandler(enabled = state.currentStep > 0) {
-        viewModel.onEvent(OnboardingEvent.PreviousStep)
-    }
     
     Box(modifier = Modifier.fillMaxSize()) {
         // Animated background
