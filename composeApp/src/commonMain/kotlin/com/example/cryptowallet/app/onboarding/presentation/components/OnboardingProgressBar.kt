@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,59 +38,66 @@ fun OnboardingProgressBar(
     
     val accessibilityDescription = "Step ${currentStep + 1} of $totalSteps, $progress% complete"
     
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .semantics { contentDescription = accessibilityDescription },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .semantics { contentDescription = accessibilityDescription }
     ) {
-        // Step indicator text
-        Text(
-            text = "Step ${currentStep + 1} of $totalSteps",
-            style = typography.bodySmall,
-            color = colors.textSecondary
-        )
-        
-        // Progress segments
+        // Row with "Step X of 4" on left, progress segments in middle, percentage on right
         Row(
-            modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(totalSteps) { index ->
-                val isActive = index <= currentStep
-                val animatedWidth by animateFloatAsState(
-                    targetValue = if (isActive) 1f else 0f,
-                    animationSpec = tween(durationMillis = 300)
-                )
-                
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(colors.cardBackground)
-                ) {
-                    if (isActive) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(animatedWidth)
-                                .height(4.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(stepGradient)
-                        )
+            // Step indicator text on the left
+            Text(
+                text = "Step ${currentStep + 1} of $totalSteps",
+                style = typography.bodySmall,
+                color = colors.textSecondary
+            )
+            
+            // Progress segments in the middle
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                repeat(totalSteps) { index ->
+                    val isActive = index <= currentStep
+                    val animatedWidth by animateFloatAsState(
+                        targetValue = if (isActive) 1f else 0f,
+                        animationSpec = tween(durationMillis = 300)
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(colors.cardBackground)
+                    ) {
+                        if (isActive) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(animatedWidth)
+                                    .height(4.dp)
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(stepGradient)
+                            )
+                        }
                     }
                 }
             }
+            
+            // Percentage text on the right
+            Text(
+                text = "$progress%",
+                style = typography.bodySmall,
+                color = colors.textSecondary
+            )
         }
-        
-        // Percentage text
-        Text(
-            text = "$progress%",
-            style = typography.bodySmall,
-            color = colors.textSecondary
-        )
     }
 }
 
