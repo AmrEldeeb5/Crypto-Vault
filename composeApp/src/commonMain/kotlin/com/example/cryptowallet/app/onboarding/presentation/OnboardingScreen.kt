@@ -390,7 +390,7 @@ private fun OnboardingScreenPreviewContent(step: Int) {
                         enabled = true,
                         gradient = stepGradient,
                         onClick = {},
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                     
                     if (step < 3) {
@@ -443,5 +443,28 @@ fun OnboardingCoinSelectionPreview() {
 fun OnboardingNotificationsPreview() {
     com.example.cryptowallet.theme.CoinRoutineTheme {
         OnboardingScreenPreviewContent(step = 3)
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun SkipConfirmationDialogPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.fillMaxSize().background(Color(0xFF0F172A))
+        ) {
+            SkipConfirmationDialog(
+                onConfirm = {},
+                onDismiss = {}
+            )
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun SuccessAnimationOverlayPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        SuccessAnimationOverlay()
     }
 }

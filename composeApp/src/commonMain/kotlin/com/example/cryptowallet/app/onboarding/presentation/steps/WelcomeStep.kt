@@ -53,135 +53,19 @@ fun WelcomeStep(
     val accessibility = LocalCryptoAccessibility.current
     val reduceMotion = accessibility.reduceMotion
     
-    // Animated values - static when reduce motion is enabled
-    val iconScale: Float
-    val pingScale: Float
-    val pingAlpha: Float
-    
-    if (reduceMotion) {
-        iconScale = 1f
-        pingScale = 1f
-        pingAlpha = 0f
-    } else {
-        val infiniteTransition = rememberInfiniteTransition()
-        
-        // Pulse animation for icon (slow pulse like animate-pulse-slow)
-        val animatedIconScale by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = 1.05f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(3000),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-        iconScale = animatedIconScale
-        
-        // Ping animation for outer circle
-        val animatedPingScale by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = 1.3f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1500),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        pingScale = animatedPingScale
-        
-        val animatedPingAlpha by infiniteTransition.animateFloat(
-            initialValue = 0.5f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1500),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        pingAlpha = animatedPingAlpha
-    }
-    
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Sparkles icon with rounded square background and ping effect
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            // Ping circle (border animation)
-            Box(
-                modifier = Modifier
-                    .size(96.dp)
-                    .scale(pingScale)
-                    .alpha(pingAlpha)
-                    .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .then(
-                        Modifier.background(
-                            Brush.radialGradient(
-                                colors = listOf(
-                                    colors.accentBlue500.copy(alpha = 0.3f),
-                                    Color.Transparent
-                                )
-                            )
-                        )
-                    )
-            )
-            
-            // Main icon with rounded square background
-            Box(
-                modifier = Modifier
-                    .size(96.dp)
-                    .scale(iconScale)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(colors.accentBlue500, colors.accentPurple500)
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                // Sparkles icon
-                Text(
-                    text = "✦",
-                    fontSize = 48.sp,
-                    color = Color.White
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Gradient title "Welcome to CryptoVault" (blue -> purple -> pink gradient)
-        Text(
-            text = "Welcome to CryptoVault",
-            style = typography.displayLarge.copy(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        colors.accentBlue400,
-                        colors.accentPurple400,
-                        colors.accentPink400
-                    )
-                )
-            ),
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        // Subtitle
-        Text(
-            text = "Your premium crypto tracking companion",
-            style = typography.bodyLarge,
-            color = colors.textSecondary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
+        WelcomeHeader()
+
         
         // Feature highlight cards
         Column(
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             welcomeFeatures.forEachIndexed { index, feature ->
@@ -196,7 +80,114 @@ fun WelcomeStep(
 }
 
 @Composable
-private fun WelcomeFeatureCard(
+fun WelcomeHeader(
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    val accessibility = LocalCryptoAccessibility.current
+    val reduceMotion = accessibility.reduceMotion
+
+    // Animated values - static when reduce motion is enabled
+    val iconScale: Float
+    val pingScale: Float
+    val pingAlpha: Float
+
+    if (reduceMotion) {
+        iconScale = 1f
+        pingScale = 1f
+        pingAlpha = 0f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition()
+
+        // Pulse animation for icon
+        val animatedIconScale by infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 1.05f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(3000),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+        iconScale = animatedIconScale
+
+        // Ping animation for outer circle
+        val animatedPingScale by infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 1.3f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1500),
+                repeatMode = RepeatMode.Restart
+            )
+        )
+        pingScale = animatedPingScale
+
+        val animatedPingAlpha by infiniteTransition.animateFloat(
+            initialValue = 0.5f,
+            targetValue = 0f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1500),
+                repeatMode = RepeatMode.Restart
+            )
+        )
+        pingAlpha = animatedPingAlpha
+    }
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Sparkles icon section
+
+
+
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .scale(iconScale)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(colors.accentBlue500, colors.accentPurple500)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "✦", fontSize = 48.sp, color = Color.White)
+            }
+
+
+
+
+        Text(
+            text = "Welcome to CryptoVault",
+            style = typography.titleLarge.copy(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        colors.accentBlue400,
+                        colors.accentPurple400,
+                        colors.accentPink400
+                    )
+                )
+            ),
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+
+
+
+        Text(
+            text = "Your premium crypto tracking companion",
+            style = typography.bodyLarge,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun WelcomeFeatureCard(
     feature: OnboardingFeature,
     index: Int = 0,
     animateIn: Boolean = true,
@@ -206,23 +197,24 @@ private fun WelcomeFeatureCard(
     val typography = LocalCryptoTypography.current
     val accessibility = LocalCryptoAccessibility.current
     val reduceMotion = accessibility.reduceMotion
-    
+
+
     // Staggered animation
     var isVisible by remember { mutableStateOf(!animateIn || reduceMotion) }
-    
+
     LaunchedEffect(animateIn, reduceMotion) {
         if (animateIn && !reduceMotion) {
             delay(index * 150L)
             isVisible = true
         }
     }
-    
+
     val alpha = if (isVisible) 1f else 0f
     val cardShape = RoundedCornerShape(16.dp)
     // React: bg-slate-800/50 border border-slate-700/50
     val slateBackground = Color(0xFF1E293B).copy(alpha = 0.5f)
     val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
-    
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -234,15 +226,17 @@ private fun WelcomeFeatureCard(
                 color = slateBorder,
                 shape = cardShape
             )
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Icon with gradient background (rounded-xl)
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(40.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         Brush.linearGradient(feature.gradientColors)
@@ -251,16 +245,19 @@ private fun WelcomeFeatureCard(
             ) {
                 Text(
                     text = feature.iconType.emoji,
-                    fontSize = 24.sp
+                    fontSize = 16.sp
                 )
             }
-            
-            Spacer(modifier = Modifier.width(16.dp))
-            
-            Column {
+
+
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+
+            ) {
                 Text(
                     text = feature.title,
-                    style = typography.titleSmall,
+                    style = typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = colors.textPrimary
                 )
@@ -274,6 +271,28 @@ private fun WelcomeFeatureCard(
     }
 }
 
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun WelcomeHeaderPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            WelcomeHeader()
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun WelcomeFeatureCardPreview() {
+    val feature = com.example.cryptowallet.app.onboarding.domain.welcomeFeatures[0]
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp)
+        ) {
+            WelcomeFeatureCard(feature = feature)
+        }
+    }
+}
 
 @org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable

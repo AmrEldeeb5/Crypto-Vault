@@ -83,7 +83,9 @@ fun FeatureCard(
             )
             .padding(20.dp)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             // Icon with rounded square background (rounded-xl = 12dp)
             Box(
                 modifier = Modifier
@@ -201,6 +203,21 @@ fun CompactFeatureCard(
                     color = colors.textSecondary
                 )
             }
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun FeatureCardPreview() {
+    val feature = com.example.cryptowallet.app.onboarding.domain.welcomeFeatures[0]
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp),
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+        ) {
+            FeatureCard(feature = feature)
+            CompactFeatureCard(feature = feature)
         }
     }
 }

@@ -170,3 +170,30 @@ fun CoinSelectionCard(
         }
     }
 }
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun CoinSelectionCardPreview() {
+    val btc = com.example.cryptowallet.app.onboarding.domain.popularCoins[0]
+    val eth = com.example.cryptowallet.app.onboarding.domain.popularCoins[1]
+    
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+        ) {
+            CoinSelectionCard(
+                coin = btc,
+                isSelected = true,
+                onToggle = {},
+                modifier = Modifier.weight(1f)
+            )
+            CoinSelectionCard(
+                coin = eth,
+                isSelected = false,
+                onToggle = {},
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}

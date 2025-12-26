@@ -49,27 +49,10 @@ fun NotificationsStep(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalCryptoColors.current
-    val typography = LocalCryptoTypography.current
-    val haptic = LocalHapticFeedback.current
     val accessibility = LocalCryptoAccessibility.current
     val reduceMotion = accessibility.reduceMotion
     
     val infiniteTransition = rememberInfiniteTransition()
-    
-    // Bouncing animation for bell icon
-    val bellBounce = if (reduceMotion) {
-        0f
-    } else {
-        val animatedBounce by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = -10f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(600),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-        animatedBounce
-    }
     
     // Pulsing animation for status dots
     val pulseAlpha = if (reduceMotion) {
@@ -92,45 +75,7 @@ fun NotificationsStep(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Bouncing bell icon in gradient rounded square (emerald to teal)
-        Box(
-            modifier = Modifier
-                .padding(top = (-bellBounce).dp)
-                .size(80.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.profit, Color(0xFF14B8A6)) // emerald to teal
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "🔔",
-                fontSize = 40.sp
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Title - "Never Miss a Move"
-        Text(
-            text = "Never Miss a Move",
-            style = typography.displayMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Subtitle
-        Text(
-            text = "Get instant alerts on price changes",
-            style = typography.bodyMedium,
-            color = colors.textSecondary,
-            textAlign = TextAlign.Center
-        )
+        NotificationsHeader()
         
         Spacer(modifier = Modifier.height(24.dp))
         
@@ -174,110 +119,177 @@ fun NotificationsStep(
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Enable Notifications toggle button
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .then(
-                    if (notificationsEnabled) {
-                        Modifier.background(
-                            Brush.horizontalGradient(
-                                colors = listOf(colors.profit, Color(0xFF14B8A6))
-                            )
-                        )
-                    } else {
-                        Modifier
-                            .background(colors.cardBackground.copy(alpha = 0.3f))
-                            .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
-                    }
-                )
-                .clickable {
-                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onToggleNotifications()
-                }
-                .padding(20.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Bell icon
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                if (notificationsEnabled) {
-                                    Color.White.copy(alpha = 0.2f)
-                                } else {
-                                    colors.profit.copy(alpha = 0.2f)
-                                }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "🔔",
-                            fontSize = 24.sp
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.width(12.dp))
-                    
-                    Column {
-                        Text(
-                            text = "Enable Notifications",
-                            style = typography.titleSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (notificationsEnabled) Color.White else colors.textPrimary
-                        )
-                        Text(
-                            text = "Stay informed in real-time",
-                            style = typography.bodySmall,
-                            color = if (notificationsEnabled) Color.White.copy(alpha = 0.8f) else colors.textSecondary
-                        )
-                    }
-                }
-                
-                // Checkbox circle
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .then(
-                            if (notificationsEnabled) {
-                                Modifier.background(Color.White)
-                            } else {
-                                Modifier.border(2.dp, colors.cardBorder, CircleShape)
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (notificationsEnabled) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = colors.profit,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            }
-        }
+        EnableNotificationsToggle(
+            enabled = notificationsEnabled,
+            onToggle = onToggleNotifications
+        )
         
         Spacer(modifier = Modifier.height(16.dp))
         
         // Disclaimer text
         Text(
             text = "You can customize notification preferences anytime in settings",
-            style = typography.bodySmall,
+            style = LocalCryptoTypography.current.bodySmall,
             color = colors.textTertiary,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@Composable
+fun NotificationsHeader(
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    val accessibility = LocalCryptoAccessibility.current
+    val reduceMotion = accessibility.reduceMotion
+    
+    val infiniteTransition = rememberInfiniteTransition()
+    
+    // Bouncing animation for bell icon
+    val bellBounce = if (reduceMotion) {
+        0f
+    } else {
+        val animatedBounce by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = -10f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(600),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+        animatedBounce
+    }
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Bouncing bell icon section
+        Box(
+            modifier = Modifier
+                .padding(top = (-bellBounce).dp)
+                .size(80.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(colors.profit, Color(0xFF14B8A6))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "🔔", fontSize = 40.sp)
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Never Miss a Move",
+            style = typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            color = colors.textPrimary,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Get instant alerts on price changes",
+            style = typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun EnableNotificationsToggle(
+    enabled: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    val haptic = LocalHapticFeedback.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .then(
+                if (enabled) {
+                    Modifier.background(
+                        Brush.horizontalGradient(
+                            colors = listOf(colors.profit, Color(0xFF14B8A6))
+                        )
+                    )
+                } else {
+                    Modifier
+                        .background(colors.cardBackground.copy(alpha = 0.3f))
+                        .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+                }
+            )
+            .clickable {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                onToggle()
+            }
+            .padding(20.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (enabled) Color.White.copy(alpha = 0.2f) else colors.profit.copy(alpha = 0.2f)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "🔔", fontSize = 24.sp)
+                }
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                Column {
+                    Text(
+                        text = "Enable Notifications",
+                        style = typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (enabled) Color.White else colors.textPrimary
+                    )
+                    Text(
+                        text = "Stay informed in real-time",
+                        style = typography.bodySmall,
+                        color = if (enabled) Color.White.copy(alpha = 0.8f) else colors.textSecondary
+                    )
+                }
+            }
+            
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .then(
+                        if (enabled) Modifier.background(Color.White) else Modifier.border(2.dp, colors.cardBorder, CircleShape)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (enabled) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = colors.profit,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -369,6 +381,65 @@ private fun NotificationInfoCard(
                     color = colors.textTertiary
                 )
             }
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun NotificationsHeaderPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            NotificationsHeader()
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun EnableNotificationsTogglePreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp),
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+        ) {
+            EnableNotificationsToggle(enabled = true, onToggle = {})
+            EnableNotificationsToggle(enabled = false, onToggle = {})
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun NotificationsStepPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.background(Color(0xFF0F172A))
+        ) {
+            NotificationsStep(
+                notificationsEnabled = true,
+                onToggleNotifications = {}
+            )
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun NotificationInfoCardPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp)
+        ) {
+            NotificationInfoCard(
+                icon = "📈",
+                iconGradient = listOf(Color(0xFF34D399), Color(0xFF14B8A6)),
+                title = "Price Movement Alerts",
+                description = "Get notified when prices hit your targets",
+                statusText = "Real-time notifications",
+                statusDotColor = Color(0xFF34D399),
+                pulseAlpha = 1f
+            )
         }
     }
 }

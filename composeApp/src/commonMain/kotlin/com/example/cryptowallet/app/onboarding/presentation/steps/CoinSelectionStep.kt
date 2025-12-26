@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,6 @@ fun CoinSelectionStep(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalCryptoColors.current
-    val typography = LocalCryptoTypography.current
     
     Column(
         modifier = modifier
@@ -41,54 +41,7 @@ fun CoinSelectionStep(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // BarChart icon in gradient rounded square (pink to rose gradient)
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.accentPink500, colors.loss)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "📊",
-                fontSize = 40.sp
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Title - "Choose Your Favorites"
-        Text(
-            text = "Choose Your Favorites",
-            style = typography.displayMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Subtitle
-        Text(
-            text = "Select coins to add to your watchlist",
-            style = typography.bodyMedium,
-            color = colors.textSecondary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(4.dp))
-        
-        // Hint text
-        Text(
-            text = "You can always change this later",
-            style = typography.bodySmall,
-            color = colors.textTertiary,
-            textAlign = TextAlign.Center
-        )
+        CoinSelectionHeader()
         
         Spacer(modifier = Modifier.height(24.dp))
         
@@ -118,21 +71,87 @@ fun CoinSelectionStep(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Selection badge (emerald green when coins selected)
-        if (selectedCoins.isNotEmpty()) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(colors.profit.copy(alpha = 0.1f))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Text(
-                    text = "✓ ${selectedCoins.size} ${if (selectedCoins.size == 1) "coin" else "coins"} selected",
-                    style = typography.bodyMedium,
-                    color = colors.profit,
-                    textAlign = TextAlign.Center
-                )
-            }
+        SelectionBadge(selectedCount = selectedCoins.size)
+    }
+}
+
+@Composable
+fun CoinSelectionHeader(
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // BarChart icon section
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(colors.accentPink500, colors.loss)
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "📊", fontSize = 40.sp)
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Choose Your Favorites",
+            style = typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            color = colors.textPrimary,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Select coins to add to your watchlist",
+            style = typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(4.dp))
+        
+        Text(
+            text = "You can always change this later",
+            style = typography.bodySmall,
+            color = colors.textTertiary,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun SelectionBadge(
+    selectedCount: Int,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    
+    if (selectedCount > 0) {
+        Box(
+            modifier = modifier
+                .clip(RoundedCornerShape(16.dp))
+                .background(colors.profit.copy(alpha = 0.1f))
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = "✓ $selectedCount ${if (selectedCount == 1) "coin" else "coins"} selected",
+                style = typography.bodyMedium,
+                color = colors.profit,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -142,5 +161,40 @@ fun getSelectionCountText(count: Int): String {
         count == 0 -> "Select at least one coin to continue"
         count == 1 -> "1 coin selected"
         else -> "$count coins selected"
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun CoinSelectionHeaderPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            CoinSelectionHeader()
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun SelectionBadgePreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            SelectionBadge(selectedCount = 5)
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun CoinSelectionStepPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.background(Color(0xFF0F172A))
+        ) {
+            CoinSelectionStep(
+                selectedCoins = setOf("BTC", "ETH"),
+                onToggleCoin = {}
+            )
+        }
     }
 }

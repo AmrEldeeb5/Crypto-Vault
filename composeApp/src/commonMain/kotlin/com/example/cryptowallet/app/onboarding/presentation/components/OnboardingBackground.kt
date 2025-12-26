@@ -8,13 +8,16 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -242,4 +245,29 @@ private fun FloatingSymbol(data: SymbolData) {
             )
             .alpha(data.alpha * alphaMultiplier)
     )
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun OnboardingBackgroundPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        OnboardingBackground()
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun FloatingSymbolPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.size(100.dp).background(Color(0xFF0F172A)), contentAlignment = Alignment.Center) {
+            FloatingSymbol(
+                data = SymbolData(
+                    symbol = "₿",
+                    x = 0, y = 0, size = 48, alpha = 0.8f,
+                    durationY = 3000, durationX = 4000,
+                    amplitudeY = 20f, amplitudeX = 15f, delay = 0
+                )
+            )
+        }
+    }
 }

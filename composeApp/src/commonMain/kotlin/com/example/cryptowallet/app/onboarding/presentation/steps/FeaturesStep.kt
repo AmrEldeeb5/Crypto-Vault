@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,6 @@ fun FeaturesStep(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalCryptoColors.current
-    val typography = LocalCryptoTypography.current
     
     Column(
         modifier = modifier
@@ -40,44 +40,7 @@ fun FeaturesStep(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Zap icon in gradient rounded square (rounded-2xl)
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.accentPurple500, colors.accentPink500)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "⚡",
-                fontSize = 40.sp
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Title - "Everything You Need"
-        Text(
-            text = "Everything You Need",
-            style = typography.displayMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Subtitle
-        Text(
-            text = "Track, analyze, and stay ahead of the market",
-            style = typography.bodyMedium,
-            color = colors.textSecondary,
-            textAlign = TextAlign.Center
-        )
+        FeaturesHeader()
         
         Spacer(modifier = Modifier.height(24.dp))
         
@@ -117,47 +80,127 @@ fun FeaturesStep(
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // "100% Free Forever" info banner
+        FreeForeverBanner()
+    }
+}
+
+@Composable
+fun FeaturesHeader(
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Zap icon in gradient rounded square
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .size(80.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            colors.accentBlue600.copy(alpha = 0.2f),
-                            colors.accentPurple600.copy(alpha = 0.2f)
-                        )
+                    Brush.linearGradient(
+                        colors = listOf(colors.accentPurple500, colors.accentPink500)
                     )
-                )
-                .padding(16.dp)
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            Row(
-                verticalAlignment = Alignment.Top
-            ) {
-                // Shield icon
-                Text(
-                    text = "🛡️",
-                    fontSize = 20.sp
+            Text(text = "⚡", fontSize = 40.sp)
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Everything You Need",
+            style = typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            color = colors.textPrimary,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Track, analyze, and stay ahead of the market",
+            style = typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun FreeForeverBanner(
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(
+                        colors.accentBlue600.copy(alpha = 0.2f),
+                        colors.accentPurple600.copy(alpha = 0.2f)
+                    )
                 )
-                
-                Spacer(modifier = Modifier.width(12.dp))
-                
-                Column {
-                    Text(
-                        text = "100% Free Forever",
-                        style = typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.accentBlue400
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "No credit card required. All premium features included.",
-                        style = typography.bodySmall,
-                        color = colors.textSecondary
-                    )
-                }
+            )
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.Top) {
+            Text(text = "🛡️", fontSize = 20.sp)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = "100% Free Forever",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.accentBlue400
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "No credit card required. All premium features included.",
+                    style = typography.bodySmall,
+                    color = colors.textSecondary
+                )
             }
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun FeaturesHeaderPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            FeaturesHeader()
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun FreeForeverBannerPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        Box(modifier = Modifier.background(Color(0xFF0F172A)).padding(24.dp)) {
+            FreeForeverBanner()
+        }
+    }
+}
+
+@org.jetbrains.compose.ui.tooling.preview.Preview
+@Composable
+fun FeaturesStepPreview() {
+    com.example.cryptowallet.theme.CoinRoutineTheme {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.background(Color(0xFF0F172A))
+        ) {
+            FeaturesStep()
         }
     }
 }
