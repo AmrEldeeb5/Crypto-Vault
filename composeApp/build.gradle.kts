@@ -95,6 +95,10 @@ kotlin {
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotest.property)
             implementation(libs.kotlinx.coroutines.test)
+            
+            // Compose Testing
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
     }
 }

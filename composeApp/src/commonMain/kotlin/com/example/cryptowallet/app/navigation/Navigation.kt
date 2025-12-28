@@ -27,6 +27,7 @@ import com.example.cryptowallet.app.onboarding.data.OnboardingRepository
 import com.example.cryptowallet.app.onboarding.presentation.OnboardingScreen
 import com.example.cryptowallet.app.portfolio.presentation.PortfolioScreen
 import com.example.cryptowallet.app.referral.presentation.ReferralScreen
+import com.example.cryptowallet.app.splash.SplashScreen
 import com.example.cryptowallet.app.trade.presentation.buy.BuyScreen
 import com.example.cryptowallet.app.trade.presentation.sell.SellScreen
 import org.koin.compose.koinInject
@@ -38,13 +39,13 @@ fun Navigation(
     navController: NavHostController = rememberNavController()
 ) {
     val onboardingRepository: OnboardingRepository = koinInject()
-    var startDestination: Screens by remember { mutableStateOf(Screens.Main) }
+    var nextDestination: Screens by remember { mutableStateOf(Screens.Main) }
     var isLoading by remember { mutableStateOf(true) }
     
     // Check if onboarding is completed
     LaunchedEffect(Unit) {
         val isCompleted = onboardingRepository.isOnboardingCompleted()
-        startDestination = if (isCompleted) Screens.Main else Screens.Onboarding
+        nextDestination = if (isCompleted) Screens.Main else Screens.Onboarding
         isLoading = false
     }
     
@@ -55,8 +56,23 @@ fun Navigation(
     
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = Screens.Splash
     ) {
+        // Splash Screen with fade transition
+        composable<Screens.Splash>(
+            enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            exitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) }
+        ) {
+            SplashScreen(
+                onSplashComplete = {
+                    navController.navigate(nextDestination) {
+                        // Remove splash from back stack
+                        popUpTo(Screens.Splash) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
         // Onboarding Screen with fade transition
         composable<Screens.Onboarding>(
             enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },

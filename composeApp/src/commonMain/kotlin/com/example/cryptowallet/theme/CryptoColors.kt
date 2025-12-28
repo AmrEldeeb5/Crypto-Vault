@@ -25,6 +25,66 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+// ============================================================================
+// SPLASH SCREEN COLOR TOKENS
+// ============================================================================
+// Additional Slate colors for splash screen components
+
+/** Slate 950 - Darkest background */
+val Slate950 = Color(0xFF020617)
+/** Slate 900 - Primary dark background */
+val Slate900 = Color(0xFF0F172A)
+/** Slate 800 - Elevated surfaces */
+val Slate800 = Color(0xFF1E293B)
+/** Slate 700 - Borders and dividers */
+val Slate700 = Color(0xFF334155)
+/** Slate 600 - Muted borders */
+val Slate600 = Color(0xFF475569)
+/** Slate 500 - Secondary text */
+val Slate500 = Color(0xFF64748B)
+/** Slate 400 - Body text */
+val Slate400 = Color(0xFF94A3B8)
+/** Slate 300 - Primary light text */
+val Slate300 = Color(0xFFCBD5E1)
+/** Slate 200 - Very light text/borders */
+val Slate200 = Color(0xFFE2E8F0)
+
+// Blue color variants
+/** Blue 700 - Darker blue for gradients */
+val Blue700 = Color(0xFF1D4ED8)
+/** Blue 600 - Dark blue accent */
+val Blue600 = Color(0xFF2563EB)
+/** Blue 500 - Medium blue accent */
+val Blue500 = Color(0xFF3B82F6)
+/** Blue 400 - Light blue accent */
+val Blue400 = Color(0xFF60A5FA)
+
+// Purple color variants
+/** Purple 700 - Darker purple for gradients */
+val Purple700 = Color(0xFF7C3AED)
+/** Purple 600 - Dark purple accent */
+val Purple600 = Color(0xFF7C3AED)
+/** Purple 500 - Medium purple accent */
+val Purple500 = Color(0xFFA855F7)
+/** Purple 400 - Light purple accent */
+val Purple400 = Color(0xFFC084FC)
+
+// Pink color variants
+/** Pink 500 - Medium pink accent */
+val Pink500 = Color(0xFFEC4899)
+/** Pink 400 - Light pink accent */
+val Pink400 = Color(0xFFF9A8D4)
+
+// Emerald (Success/Secure) color variants
+/** Emerald 500 - Medium emerald for success states */
+val Emerald500 = Color(0xFF10B981)
+/** Emerald 400 - Light emerald accent */
+val Emerald400 = Color(0xFF34D399)
+
+// Yellow (Warning/Real-time) color variants
+/** Yellow 400 - Yellow accent for warnings */
+val Yellow400 = Color(0xFFFBBF24)
+
 /**
  * Data class containing all color tokens for the CryptoVault design system.
  *
