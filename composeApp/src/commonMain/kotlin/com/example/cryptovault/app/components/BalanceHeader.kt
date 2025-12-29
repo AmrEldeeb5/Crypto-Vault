@@ -36,9 +36,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.cryptovault.theme.AppTheme
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoSpacing
 import com.example.cryptovault.theme.LocalCryptoTypography
+import com.example.cryptovault.theme.responsiveSize
 
 /**
  * Header component displaying portfolio balance information.
@@ -68,7 +70,7 @@ fun BalanceHeader(
 ) {
     val colors = LocalCryptoColors.current
     val typography = LocalCryptoTypography.current
-    val spacing = LocalCryptoSpacing.current
+    val dimensions = AppTheme.dimensions
 
     val performanceColor = when {
         isPositive -> colors.profit
@@ -80,7 +82,7 @@ fun BalanceHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.cardBackgroundElevated)
-            .padding(spacing.lg)
+            .padding(dimensions.screenPadding)
             .semantics {
                 contentDescription = "Portfolio value: $totalValue. Cash balance: $cashBalance. Performance: $performancePercent $performanceLabel"
             }
@@ -96,7 +98,7 @@ fun BalanceHeader(
                 color = colors.textSecondary
             )
             
-            Spacer(modifier = Modifier.height(spacing.xs))
+            Spacer(modifier = Modifier.height(dimensions.smallSpacing))
             
             // Total value amount (large)
             Text(
@@ -106,7 +108,7 @@ fun BalanceHeader(
                 textAlign = TextAlign.Center
             )
             
-            Spacer(modifier = Modifier.height(spacing.sm))
+            Spacer(modifier = Modifier.height(dimensions.itemSpacing))
             
             // Performance indicator with label
             Row(
@@ -118,7 +120,7 @@ fun BalanceHeader(
                     style = typography.titleMedium,
                     color = performanceColor
                 )
-                Spacer(modifier = Modifier.width(spacing.xs))
+                Spacer(modifier = Modifier.width(dimensions.smallSpacing))
                 Text(
                     text = "($performanceLabel)",
                     style = typography.bodyMedium,
@@ -126,7 +128,7 @@ fun BalanceHeader(
                 )
             }
             
-            Spacer(modifier = Modifier.height(spacing.md))
+            Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
             
             // Cash balance
             Row(
@@ -137,7 +139,7 @@ fun BalanceHeader(
                     style = typography.bodyMedium,
                     color = colors.textSecondary
                 )
-                Spacer(modifier = Modifier.width(spacing.xs))
+                Spacer(modifier = Modifier.width(dimensions.smallSpacing))
                 Text(
                     text = cashBalance,
                     style = typography.bodyLarge,
@@ -147,14 +149,22 @@ fun BalanceHeader(
             
             // Buy button (conditional)
             if (showBuyButton) {
-                Spacer(modifier = Modifier.height(spacing.lg))
+                Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
                 
                 Button(
                     onClick = onBuyClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.profit
                     ),
-                    contentPadding = PaddingValues(horizontal = 48.dp, vertical = 12.dp)
+                    modifier = Modifier.height(dimensions.buttonHeight),
+                    contentPadding = PaddingValues(
+                        horizontal = responsiveSize(
+                            compact = 32.dp,
+                            medium = 40.dp,
+                            expanded = 48.dp
+                        ),
+                        vertical = 12.dp
+                    )
                 ) {
                     Text(
                         text = "Buy Coin",

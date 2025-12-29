@@ -111,7 +111,7 @@ fun FeatureCard(
                 color = SlateBorder.copy(alpha = 0.5f),
                 shape = cardShape
             )
-            .padding(dimensions.cardPadding + 8.dp)
+            .padding(dimensions.cardPadding)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()

@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,9 +31,12 @@ import com.example.cryptovault.app.components.CoinCard
 import com.example.cryptovault.app.components.EmptyState
 import com.example.cryptovault.app.components.UiCoinItem
 import com.example.cryptovault.app.realtime.domain.PriceDirection
+import com.example.cryptovault.theme.AppTheme
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoSpacing
 import com.example.cryptovault.theme.LocalCryptoTypography
+import com.example.cryptovault.theme.WindowSize
+import com.example.cryptovault.theme.rememberWindowSize
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -102,7 +108,7 @@ private fun PortfolioCoinsList(
 ) {
     val colors = LocalCryptoColors.current
     val typography = LocalCryptoTypography.current
-    val spacing = LocalCryptoSpacing.current
+    val dimensions = AppTheme.dimensions
     
     Box(
         contentAlignment = Alignment.Center,
@@ -127,14 +133,16 @@ private fun PortfolioCoinsList(
                     text = "Your Holdings",
                     style = typography.titleLarge,
                     color = colors.textPrimary,
-                    modifier = Modifier.padding(spacing.md)
+                    modifier = Modifier.padding(dimensions.screenPadding)
                 )
                 
-                Spacer(modifier = Modifier.height(spacing.xs))
+                Spacer(modifier = Modifier.height(dimensions.smallSpacing))
                 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(spacing.xs),
-                    modifier = Modifier.padding(horizontal = spacing.md)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(calculatePortfolioGridColumns()),
+                    verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing),
+                    modifier = Modifier.padding(horizontal = dimensions.screenPadding)
                 ) {
                     items(coins, key = { it.id }) { coin ->
                         CoinCard(
@@ -162,4 +170,19 @@ private fun UiPortfolioCoinItem.toUiCoinItem(): UiCoinItem {
         holdingsAmount = amountInUnitText,
         holdingsValue = amountInFiatText
     )
+}
+
+/**
+ * Calculates the number of columns for the portfolio grid based on screen size.
+ * 
+ * @return 1 for COMPACT screens (< 600dp), 2 for MEDIUM screens (600-840dp), 3 for EXPANDED screens (> 840dp)
+ */
+@Composable
+private fun calculatePortfolioGridColumns(): Int {
+    val windowSize = rememberWindowSize()
+    return when (windowSize) {
+        WindowSize.COMPACT -> 1  // < 600dp
+        WindowSize.MEDIUM -> 2   // 600-840dp
+        WindowSize.EXPANDED -> 3 // > 840dp
+    }
 }

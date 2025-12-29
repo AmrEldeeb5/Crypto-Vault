@@ -13,6 +13,7 @@ package com.example.cryptovault
 
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.spec.IsolationMode
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Project-wide Kotest configuration.
@@ -47,5 +48,5 @@ object KotestConfig : AbstractProjectConfig() {
      * Set to 60 seconds to allow for property-based tests with
      * 100+ iterations.
      */
-    override val timeout = 60_000L
+    override val timeout = 60.seconds
 }

@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoShapes
 import com.example.cryptovault.theme.LocalCryptoSpacing
 import com.example.cryptovault.theme.LocalCryptoTypography
+import com.example.cryptovault.theme.AppTheme
 
 /** Minimum touch target size for accessibility compliance (48dp) */
 val MinTouchTargetSize = 48.dp
@@ -78,6 +80,7 @@ fun CoinCard(
     val typography = LocalCryptoTypography.current
     val spacing = LocalCryptoSpacing.current
     val shapes = LocalCryptoShapes.current
+    val dimensions = AppTheme.dimensions
 
     val changeColor = if (coin.isPositive) colors.profit else colors.loss
     
@@ -92,11 +95,11 @@ fun CoinCard(
     }
     
     Card(
-        shape = shapes.card,
+        shape = RoundedCornerShape(dimensions.cardCornerRadius),
         colors = CardDefaults.cardColors(
             containerColor = colors.cardBackground
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensions.cardElevation),
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = MinTouchTargetSize)
@@ -112,12 +115,12 @@ fun CoinCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(spacing.md)
+                .padding(dimensions.cardPadding)
         ) {
             // Coin icon
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(dimensions.coinIconSize)
                     .clip(CircleShape)
                     .background(colors.cardBackgroundElevated)
             ) {
@@ -125,11 +128,11 @@ fun CoinCard(
                     model = coin.iconUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(dimensions.coinIconSize)
                 )
             }
             
-            Spacer(modifier = Modifier.width(spacing.md))
+            Spacer(modifier = Modifier.width(dimensions.itemSpacing))
             
             // Coin name and symbol
             Column(
@@ -160,7 +163,7 @@ fun CoinCard(
                         style = typography.titleMedium,
                         color = colors.textPrimary
                     )
-                    Spacer(modifier = Modifier.width(spacing.xs))
+                    Spacer(modifier = Modifier.width(dimensions.smallSpacing))
                     PriceIndicator(direction = coin.priceDirection)
                 }
                 
@@ -172,7 +175,7 @@ fun CoinCard(
                 
                 // Holdings section (only shown when showHoldings is true and holdings exist)
                 if (showHoldings && coin.hasHoldings()) {
-                    Spacer(modifier = Modifier.height(spacing.xs))
+                    Spacer(modifier = Modifier.height(dimensions.smallSpacing))
                     Text(
                         text = coin.holdingsAmount ?: "",
                         style = typography.caption,
