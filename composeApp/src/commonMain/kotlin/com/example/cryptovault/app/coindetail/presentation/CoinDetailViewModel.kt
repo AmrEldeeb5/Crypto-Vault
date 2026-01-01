@@ -68,7 +68,10 @@ class CoinDetailViewModel(
                         low24h = coinModel.price * 0.95,
                         marketCap = coinModel.price * 19_500_000, // Mock circulating supply
                         circulatingSupply = 19_500_000.0, // Mock for BTC-like
-                        allTimeHigh = coinModel.price * 1.5 // Mock ATH
+                        allTimeHigh = coinModel.price * 1.5, // Mock ATH
+                        allTimeLow = coinModel.price * 0.1, // Mock ATL (10% of current)
+                        maxSupply = 21_000_000.0, // Mock max supply (BTC-like)
+                        description = "A decentralized digital currency that enables instant payments to anyone, anywhere in the world." // Mock description
                     )
                     
                     // Generate chart data for all timeframes

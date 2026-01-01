@@ -32,6 +32,7 @@
 package com.example.cryptovault.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -140,6 +141,15 @@ val LocalDimensions = staticCompositionLocalOf {
 }
 
 /**
+ * CompositionLocal for providing use window size class.
+ *
+ * Provides access to the current window size class.
+ */
+val LocalWindowSize = staticCompositionLocalOf {
+    WindowSize.COMPACT
+}
+
+/**
  * Convenient accessor object for theme values.
  *
  * Provides a clean API for accessing theme tokens in composables.
@@ -160,6 +170,13 @@ object AppTheme {
     val dimensions: Dimensions
         @Composable
         get() = LocalDimensions.current
+
+    /**
+     * Access the current window size class.
+     */
+    val windowSize: WindowSize
+        @Composable
+        get() = LocalWindowSize.current
 }
 
 /**
@@ -204,24 +221,30 @@ internal fun CoinRoutineTheme(
     val cryptoSpacing = DefaultCryptoSpacing
     val cryptoShapes = DefaultCryptoShapes
     
-    // Responsive dimensions
-    val dimensions = rememberDimensions()
-
-    CompositionLocalProvider(
-        // Legacy
-        LocalCoinRoutineColorsPalette provides coinRoutineColorsPalette,
-        // New design system
-        LocalCryptoColors provides cryptoColors,
-        LocalCryptoTypography provides cryptoTypography,
-        LocalCryptoSpacing provides cryptoSpacing,
-        LocalCryptoShapes provides cryptoShapes,
-        LocalCryptoAccessibility provides CryptoAccessibility(),
+    BoxWithConstraints {
+        val screenWidthDp = maxWidth.value.toInt()
+        
         // Responsive dimensions
-        LocalDimensions provides dimensions,
-    ) {
-        MaterialTheme(
-            colorScheme = colorScheme,
-            content = content,
-        )
+        val dimensions = calculateDimensions(screenWidthDp)
+        val windowSize = calculateWindowSize(screenWidthDp)
+
+        CompositionLocalProvider(
+            // Legacy
+            LocalCoinRoutineColorsPalette provides coinRoutineColorsPalette,
+            // New design system
+            LocalCryptoColors provides cryptoColors,
+            LocalCryptoTypography provides cryptoTypography,
+            LocalCryptoSpacing provides cryptoSpacing,
+            LocalCryptoShapes provides cryptoShapes,
+            LocalCryptoAccessibility provides CryptoAccessibility(),
+            // Responsive dimensions
+            LocalDimensions provides dimensions,
+            LocalWindowSize provides windowSize
+        ) {
+            MaterialTheme(
+                colorScheme = colorScheme,
+                content = content,
+            )
+        }
     }
 }

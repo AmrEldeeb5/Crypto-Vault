@@ -55,7 +55,6 @@ fun MainScreen(
     onCoinClick: (String) -> Unit = {},
     onDCAClick: () -> Unit = {},
     onCompareClick: () -> Unit = {},
-    onLeaderboardClick: () -> Unit = {},
     onReferralClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -89,7 +88,6 @@ fun MainScreen(
             BottomNavItem.ALERTS -> activeTab // Keep current tab when alerts is clicked
             BottomNavItem.DCA -> activeTab
             BottomNavItem.COMPARE -> activeTab
-            BottomNavItem.LEADERBOARD -> activeTab
         }
     }
     
@@ -201,7 +199,6 @@ fun MainScreen(
                     BottomNavItem.ALERTS -> showAlertModal = true
                     BottomNavItem.DCA -> onDCAClick()
                     BottomNavItem.COMPARE -> onCompareClick()
-                    BottomNavItem.LEADERBOARD -> onLeaderboardClick()
                     else -> activeBottomNav = item
                 }
             },

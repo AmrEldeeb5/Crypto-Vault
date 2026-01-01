@@ -1,6 +1,7 @@
 package com.example.cryptovault.app.dca.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +17,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +46,8 @@ fun DCAScreen(
     Scaffold(
         topBar = {
             ScreenHeader(
-                title = "DCA Schedules",
-                subtitle = "Dollar-Cost Averaging",
+                title = "Dollar-Cost Averaging",
+                subtitle = "Automate your crypto investments",
                 onBackClick = onBack
             )
         },
@@ -159,10 +163,20 @@ private fun DCAStatCard(label: String, value: String, modifier: Modifier = Modif
     val colors = LocalCryptoColors.current
     val spacing = LocalCryptoSpacing.current
     
-    Box(modifier = modifier.clip(RoundedCornerShape(16.dp)).background(colors.cardBackground).padding(spacing.md)) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(colors.cardBackground.copy(alpha = 0.6f))
+            .border(
+                width = 1.dp,
+                color = colors.textSecondary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(spacing.lg)
+    ) {
         Column {
             Text(text = label, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-            Spacer(modifier = Modifier.height(spacing.xs))
+            Spacer(modifier = Modifier.height(spacing.sm))
             Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = colors.textPrimary)
         }
     }
@@ -204,7 +218,16 @@ private fun DCAScheduleCard(
     val spacing = LocalCryptoSpacing.current
     
     Box(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(colors.cardBackground).padding(spacing.md)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(colors.cardBackground.copy(alpha = 0.6f))
+            .border(
+                width = 1.dp,
+                color = colors.textSecondary.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(spacing.lg)
     ) {
         Column {
             Row(
@@ -214,20 +237,29 @@ private fun DCAScheduleCard(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(spacing.md), verticalAlignment = Alignment.CenterVertically) {
                     Box(
-                        modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)).background(colors.backgroundSecondary),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xFF3B82F6), // blue-500
+                                        Color(0xFF8B5CF6)  // purple-500
+                                    )
+                                )
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         AsyncImage(model = schedule.coinIconUrl, contentDescription = "${schedule.coinName} icon", modifier = Modifier.size(36.dp))
                     }
                     Column {
-                        Text(text = schedule.coinName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = colors.textPrimary)
-                        Text(text = "$${formatAmount(schedule.amount)} ${schedule.frequency.displayName}", style = MaterialTheme.typography.bodyMedium, color = colors.textSecondary)
+                        Text(text = schedule.coinName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                        Text(text = "$${formatAmount(schedule.amount)} ${schedule.frequency.displayName}", style = MaterialTheme.typography.bodyLarge, color = colors.textSecondary)
                     }
                 }
-                Switch(
-                    checked = schedule.isActive,
-                    onCheckedChange = onToggleActive,
-                    colors = SwitchDefaults.colors(checkedThumbColor = colors.profit, checkedTrackColor = colors.profit.copy(alpha = 0.3f))
+                StatusBadge(
+                    text = if (schedule.isActive) "Active" else "Paused",
+                    isActive = schedule.isActive
                 )
             }
             
@@ -252,9 +284,41 @@ private fun DCAScheduleCard(
             
             Spacer(modifier = Modifier.height(spacing.sm))
             
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = onEditClick) { Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit", tint = colors.textSecondary) }
-                IconButton(onClick = onDeleteClick) { Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = colors.loss) }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+            ) {
+                OutlinedButton(
+                    onClick = onEditClick,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = colors.textPrimary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(spacing.xs))
+                    Text("Edit", color = colors.textPrimary)
+                }
+                OutlinedButton(
+                    onClick = onDeleteClick,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = colors.loss
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = colors.loss,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(spacing.xs))
+                    Text("Delete", color = colors.loss)
+                }
             }
         }
     }

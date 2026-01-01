@@ -27,18 +27,14 @@
  * )
  * ```
  *
- * @see rememberDimensions for dimension calculation
+ * @see calculateDimensions for dimension calculation
  * @see WindowSize for screen size classification
  */
 package com.example.cryptovault.theme
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /**
  * Immutable data class containing all responsive dimension values.
@@ -100,13 +96,10 @@ enum class WindowSize {
  * Uses Material Design 3 breakpoints to classify the screen size.
  * This classification can be used for responsive layout decisions.
  *
+ * @param screenWidthDp The width of the screen in DP
  * @return WindowSize enum value representing the current screen size class
  */
-@Composable
-fun rememberWindowSize(): WindowSize {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    
+fun calculateWindowSize(screenWidthDp: Int): WindowSize {
     return when {
         screenWidthDp < 600 -> WindowSize.COMPACT
         screenWidthDp < 840 -> WindowSize.MEDIUM
@@ -115,11 +108,7 @@ fun rememberWindowSize(): WindowSize {
 }
 
 /**
- * Calculates and remembers responsive dimension values based on screen configuration.
- *
- * This function observes screen width and height, recalculating dimensions
- * when the configuration changes (e.g., rotation, window resize). The result
- * is cached using remember to avoid unnecessary recalculations.
+ * Calculates responsive dimension values based on screen configuration.
  *
  * Dimension values are selected based on screen width breakpoints:
  * - < 320dp: Extra small phone dimensions (with warning log)
@@ -129,34 +118,28 @@ fun rememberWindowSize(): WindowSize {
  * - 600-1200dp: Tablet dimensions
  * - > 1200dp: Capped at tablet dimensions (with info log)
  *
+ * @param screenWidthDp The width of the screen in DP
  * @return Dimensions object containing all responsive sizing values
  */
-@Composable
-fun rememberDimensions(): Dimensions {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    val screenHeightDp = configuration.screenHeightDp
-    
-    return remember(screenWidthDp, screenHeightDp) {
-        when {
-            // Extremely small screens (< 320dp) - fallback to small phone dimensions
-            screenWidthDp < 320 -> {
-                println("⚠️ CryptoVault: Screen width ${screenWidthDp}dp is below minimum supported size (320dp). Using small phone dimensions.")
-                createSmallPhoneDimensions()
-            }
-            // Small phones (320-360dp)
-            screenWidthDp < 360 -> createSmallPhoneDimensions()
-            // Medium phones (360-411dp)
-            screenWidthDp < 411 -> createMediumPhoneDimensions()
-            // Large phones (411-600dp)
-            screenWidthDp < 600 -> createLargePhoneDimensions()
-            // Tablets (600-1200dp)
-            screenWidthDp < 1200 -> createTabletDimensions()
-            // Extremely large screens (> 1200dp) - cap at tablet dimensions
-            else -> {
-                println("ℹ️ CryptoVault: Screen width ${screenWidthDp}dp exceeds typical tablet size. Capping dimensions at tablet values.")
-                createTabletDimensions()
-            }
+fun calculateDimensions(screenWidthDp: Int): Dimensions {
+    return when {
+        // Extremely small screens (< 320dp) - fallback to small phone dimensions
+        screenWidthDp < 320 -> {
+            println("⚠️ CryptoVault: Screen width ${screenWidthDp}dp is below minimum supported size (320dp). Using small phone dimensions.")
+            createSmallPhoneDimensions()
+        }
+        // Small phones (320-360dp)
+        screenWidthDp < 360 -> createSmallPhoneDimensions()
+        // Medium phones (360-411dp)
+        screenWidthDp < 411 -> createMediumPhoneDimensions()
+        // Large phones (411-600dp)
+        screenWidthDp < 600 -> createLargePhoneDimensions()
+        // Tablets (600-1200dp)
+        screenWidthDp < 1200 -> createTabletDimensions()
+        // Extremely large screens (> 1200dp) - cap at tablet dimensions
+        else -> {
+            println("ℹ️ CryptoVault: Screen width ${screenWidthDp}dp exceeds typical tablet size. Capping dimensions at tablet values.")
+            createTabletDimensions()
         }
     }
 }
@@ -291,59 +274,9 @@ fun responsiveSize(
     medium: Dp = compact,
     expanded: Dp = medium
 ): Dp {
-    return when (rememberWindowSize()) {
+    return when (LocalWindowSize.current) {
         WindowSize.COMPACT -> compact
         WindowSize.MEDIUM -> medium
         WindowSize.EXPANDED -> expanded
     }
-}
-
-/**
- * Calculates a responsive text size value based on window size class.
- *
- * DEPRECATED: Use MaterialTheme.typography tokens instead for better consistency.
- * Material 3 provides a complete typography scale that adapts to screen size.
- *
- * @param compact Value for compact screens (< 600dp)
- * @param medium Value for medium screens (600-840dp), defaults to compact
- * @param expanded Value for expanded screens (> 840dp), defaults to medium
- * @return TextUnit value appropriate for current screen size
- */
-@Deprecated(
-    message = "Use MaterialTheme.typography tokens instead",
-    replaceWith = ReplaceWith("MaterialTheme.typography.headlineMedium", "androidx.compose.material3.MaterialTheme")
-)
-@Composable
-fun responsiveTextSize(
-    compact: TextUnit,
-    medium: TextUnit = compact,
-    expanded: TextUnit = medium
-): TextUnit {
-    return when (rememberWindowSize()) {
-        WindowSize.COMPACT -> compact
-        WindowSize.MEDIUM -> medium
-        WindowSize.EXPANDED -> expanded
-    }
-}
-
-/**
- * Calculates the optimal number of grid columns based on available width.
- *
- * Dynamically determines how many columns can fit in the available space
- * while respecting the minimum column width constraint. The result is
- * clamped between 2 and 4 columns for optimal usability.
- *
- * @param minColumnWidth Minimum width for each column (default 140.dp)
- * @return Number of columns between 2 and 4 inclusive
- */
-@Composable
-fun calculateGridColumns(minColumnWidth: Dp = 140.dp): Int {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp.dp
-    val dimensions = LocalDimensions.current
-    
-    val availableWidth = screenWidthDp - (dimensions.screenPadding * 2)
-    val columns = (availableWidth / (minColumnWidth + dimensions.itemSpacing)).toInt()
-    
-    return columns.coerceIn(2, 4) // Min 2, Max 4 columns
 }

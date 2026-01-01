@@ -167,26 +167,6 @@ fun WelcomeHeader(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing)
     ) {
-        // Sparkles icon section
-        Box(
-            modifier = Modifier
-                .size(dimensions.appIconSize + 32.dp)
-                .scale(iconScale)
-                .clip(RoundedCornerShape(dimensions.cardCornerRadius + 8.dp))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.accentBlue500, colors.accentPurple500)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "✦",
-                fontSize = (dimensions.appIconSize.value * 0.5f).sp,
-                color = Color.White
-            )
-        }
-
         Text(
             text = "Welcome to CryptoVault",
             style = typography.titleLarge.copy(

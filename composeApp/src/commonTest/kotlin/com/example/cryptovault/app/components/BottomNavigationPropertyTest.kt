@@ -4,18 +4,37 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.assertNotNull
+import kotlin.test.assertFalse
 
 class BottomNavigationPropertyTest {
+
+    // Feature: screens-ui-revamp, Property 4: Leaderboard Removal from Navigation
+    @Test
+    fun `Property 4 - No BottomNavItem contains LEADERBOARD or Rank`() {
+        BottomNavItem.entries.forEach { item ->
+            assertFalse(
+                item.name.contains("LEADERBOARD", ignoreCase = true),
+                "BottomNavItem should not contain LEADERBOARD: ${item.name}"
+            )
+            assertFalse(
+                item.label.contains("Rank", ignoreCase = true),
+                "BottomNavItem label should not contain Rank: ${item.label}"
+            )
+            assertFalse(
+                item.label.contains("Leaderboard", ignoreCase = true),
+                "BottomNavItem label should not contain Leaderboard: ${item.label}"
+            )
+        }
+    }
 
     @Test
     fun `Property 8 - All navigation items are defined`() {
         val items = BottomNavItem.entries
-        assertEquals(6, items.size, "Should have exactly 6 navigation items")
+        assertEquals(5, items.size, "Should have exactly 5 navigation items")
         assertTrue(items.contains(BottomNavItem.MARKET), "Should have MARKET item")
         assertTrue(items.contains(BottomNavItem.PORTFOLIO), "Should have PORTFOLIO item")
         assertTrue(items.contains(BottomNavItem.DCA), "Should have DCA item")
         assertTrue(items.contains(BottomNavItem.COMPARE), "Should have COMPARE item")
-        assertTrue(items.contains(BottomNavItem.LEADERBOARD), "Should have LEADERBOARD item")
         assertTrue(items.contains(BottomNavItem.ALERTS), "Should have ALERTS item")
     }
 
@@ -79,8 +98,7 @@ class BottomNavigationPropertyTest {
         assertEquals(1, BottomNavItem.PORTFOLIO.ordinal, "PORTFOLIO should have ordinal 1")
         assertEquals(2, BottomNavItem.DCA.ordinal, "DCA should have ordinal 2")
         assertEquals(3, BottomNavItem.COMPARE.ordinal, "COMPARE should have ordinal 3")
-        assertEquals(4, BottomNavItem.LEADERBOARD.ordinal, "LEADERBOARD should have ordinal 4")
-        assertEquals(5, BottomNavItem.ALERTS.ordinal, "ALERTS should have ordinal 5")
+        assertEquals(4, BottomNavItem.ALERTS.ordinal, "ALERTS should have ordinal 4")
     }
 
     @Test
@@ -89,7 +107,6 @@ class BottomNavigationPropertyTest {
         assertEquals("Portfolio", BottomNavItem.PORTFOLIO.label)
         assertEquals("DCA", BottomNavItem.DCA.label)
         assertEquals("Compare", BottomNavItem.COMPARE.label)
-        assertEquals("Rank", BottomNavItem.LEADERBOARD.label)
         assertEquals("Alerts", BottomNavItem.ALERTS.label)
     }
 
@@ -106,14 +123,11 @@ class BottomNavigationPropertyTest {
     fun `Property 8 - New navigation items are identifiable for screen navigation`() {
         val dcaItem = BottomNavItem.entries.find { it == BottomNavItem.DCA }
         val compareItem = BottomNavItem.entries.find { it == BottomNavItem.COMPARE }
-        val leaderboardItem = BottomNavItem.entries.find { it == BottomNavItem.LEADERBOARD }
         
         assertNotNull(dcaItem, "DCA item should exist")
         assertNotNull(compareItem, "COMPARE item should exist")
-        assertNotNull(leaderboardItem, "LEADERBOARD item should exist")
         
         assertEquals("DCA", dcaItem.label)
         assertEquals("Compare", compareItem.label)
-        assertEquals("Rank", leaderboardItem.label)
     }
 }

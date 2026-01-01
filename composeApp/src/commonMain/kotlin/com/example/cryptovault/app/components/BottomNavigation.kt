@@ -9,7 +9,6 @@
  * - Portfolio: View owned coins and performance
  * - DCA: Dollar-cost averaging calculator
  * - Compare: Compare multiple coins
- * - Leaderboard: Top performing coins ranking
  * - Alerts: Price alert management
  *
  * @see BottomNavItem for available navigation destinations
@@ -63,8 +62,6 @@ enum class BottomNavItem(
     DCA("DCA", Icons.Default.Refresh),
     /** Coin comparison tool */
     COMPARE("Compare", Icons.Default.List),
-    /** Top coins leaderboard */
-    LEADERBOARD("Rank", Icons.Default.ThumbUp),
     /** Price alerts management */
     ALERTS("Alerts", Icons.Default.Notifications)
 }

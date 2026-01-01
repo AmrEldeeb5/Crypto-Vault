@@ -14,6 +14,9 @@ data class CoinDetailData(
     val marketCap: Double = 0.0,
     val circulatingSupply: Double = 0.0,
     val allTimeHigh: Double = 0.0,
+    val allTimeLow: Double = 0.0,
+    val maxSupply: Double? = null,
+    val description: String = "",
     val priceHistory: List<PricePoint> = emptyList()
 )
 

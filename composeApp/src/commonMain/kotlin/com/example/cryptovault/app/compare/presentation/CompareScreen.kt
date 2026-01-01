@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -223,49 +224,55 @@ private fun CoinSelectorCard(
     
     Box(
         modifier = modifier
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = borderColor.copy(alpha = 0.3f)
+            )
             .clip(RoundedCornerShape(16.dp))
             .border(2.dp, borderColor, RoundedCornerShape(16.dp))
             .background(colors.cardBackground)
             .clickable(onClick = onClick)
-            .padding(spacing.md),
+            .padding(spacing.lg),
         contentAlignment = Alignment.Center
     ) {
         if (coin != null) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.xs)
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
                 AsyncImage(
                     model = coin.iconUrl,
                     contentDescription = "${coin.name} icon",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(
                     text = coin.symbol.uppercase(),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary
                 )
                 Text(
                     text = coin.name,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = colors.textSecondary
                 )
             }
         } else {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.xs)
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Select coin",
                     tint = colors.textSecondary,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(
                     text = "Select Coin",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium,
                     color = colors.textSecondary
                 )
             }
@@ -285,19 +292,32 @@ private fun ComparisonTable(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = 10.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = colors.accentBlue400.copy(alpha = 0.2f)
+            )
             .clip(RoundedCornerShape(16.dp))
             .background(colors.cardBackground)
-            .padding(spacing.md)
+            .padding(spacing.lg)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.md)) {
+            Text(
+                text = "Comparison",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary,
+                modifier = Modifier.padding(bottom = spacing.sm)
+            )
+            
             ComparisonRow(
-                label = "Price",
+                label = "Current Price",
                 value1 = formatPrice(coin1.price),
                 value2 = formatPrice(coin2.price),
                 winner = comparisonData.priceWinner,
                 difference = "${formatPercentage(comparisonData.priceDifference)}%"
             )
-            HorizontalDivider(color = colors.backgroundSecondary)
+            HorizontalDivider(color = colors.backgroundSecondary, thickness = 1.dp)
             
             ComparisonRow(
                 label = "24h Change",
@@ -306,7 +326,7 @@ private fun ComparisonTable(
                 winner = comparisonData.change24hWinner,
                 difference = "${formatPercentage(comparisonData.change24hDifference)}%"
             )
-            HorizontalDivider(color = colors.backgroundSecondary)
+            HorizontalDivider(color = colors.backgroundSecondary, thickness = 1.dp)
             
             ComparisonRow(
                 label = "Market Cap",
@@ -315,7 +335,7 @@ private fun ComparisonTable(
                 winner = comparisonData.marketCapWinner,
                 difference = "${formatPercentage(comparisonData.marketCapDifference)}%"
             )
-            HorizontalDivider(color = colors.backgroundSecondary)
+            HorizontalDivider(color = colors.backgroundSecondary, thickness = 1.dp)
             
             ComparisonRow(
                 label = "24h Volume",
@@ -324,10 +344,10 @@ private fun ComparisonTable(
                 winner = comparisonData.volumeWinner,
                 difference = "${formatPercentage(comparisonData.volumeDifference)}%"
             )
-            HorizontalDivider(color = colors.backgroundSecondary)
+            HorizontalDivider(color = colors.backgroundSecondary, thickness = 1.dp)
             
             ComparisonRow(
-                label = "Rank",
+                label = "Market Rank",
                 value1 = "#${coin1.marketCapRank}",
                 value2 = "#${coin2.marketCapRank}",
                 winner = comparisonData.rankWinner,
@@ -346,16 +366,16 @@ private fun ComparisonRow(
     difference: String?
 ) {
     val colors = LocalCryptoColors.current
-    LocalCryptoSpacing.current
+    val spacing = LocalCryptoSpacing.current
     
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(vertical = spacing.xs),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = value1,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (winner == MetricWinner.COIN_1) FontWeight.Bold else FontWeight.Normal,
             color = if (winner == MetricWinner.COIN_1) colors.profit else colors.textPrimary,
             modifier = Modifier.weight(1f)
@@ -367,15 +387,16 @@ private fun ComparisonRow(
         ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
                 color = colors.textSecondary,
                 textAlign = TextAlign.Center
             )
             if (difference != null) {
                 Text(
                     text = difference,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colors.textSecondary,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colors.textTertiary,
                     textAlign = TextAlign.Center
                 )
             }
@@ -383,7 +404,7 @@ private fun ComparisonRow(
         
         Text(
             text = value2,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (winner == MetricWinner.COIN_2) FontWeight.Bold else FontWeight.Normal,
             color = if (winner == MetricWinner.COIN_2) colors.profit else colors.textPrimary,
             textAlign = TextAlign.End,

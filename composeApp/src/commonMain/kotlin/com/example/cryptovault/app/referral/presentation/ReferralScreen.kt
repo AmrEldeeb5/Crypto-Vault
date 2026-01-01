@@ -1,6 +1,7 @@
 package com.example.cryptovault.app.referral.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -140,16 +142,21 @@ private fun EarningsCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(20.dp),
+                spotColor = colors.profit.copy(alpha = 0.3f)
+            )
             .clip(RoundedCornerShape(20.dp))
             .background(
-                Brush.linearGradient(
+                Brush.verticalGradient(
                     colors = listOf(
                         colors.profit,
                         colors.profit.copy(alpha = 0.7f)
                     )
                 )
             )
-            .padding(spacing.lg)
+            .padding(spacing.xl)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -213,20 +220,26 @@ private fun StatCard(
     
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(colors.cardBackground)
-            .padding(spacing.md)
+            .clip(RoundedCornerShape(20.dp))
+            .background(colors.cardBackground.copy(alpha = 0.6f))
+            .border(
+                width = 1.dp,
+                color = colors.textSecondary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(spacing.xl)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
                 color = colors.textSecondary
             )
-            Spacer(modifier = Modifier.height(spacing.xs))
+            Spacer(modifier = Modifier.height(spacing.sm))
             Text(
                 text = value,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary
             )
@@ -247,9 +260,14 @@ private fun ReferralCodeCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(colors.cardBackground)
-            .padding(spacing.md)
+            .clip(RoundedCornerShape(20.dp))
+            .background(colors.cardBackground.copy(alpha = 0.6f))
+            .border(
+                width = 1.dp,
+                color = colors.textSecondary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(spacing.xl)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -257,21 +275,22 @@ private fun ReferralCodeCard(
         ) {
             Text(
                 text = "Your Referral Code",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
                 color = colors.textSecondary
             )
             
-            Spacer(modifier = Modifier.height(spacing.sm))
+            Spacer(modifier = Modifier.height(spacing.md))
             
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
                     .background(colors.backgroundPrimary)
-                    .padding(horizontal = spacing.lg, vertical = spacing.md)
+                    .padding(horizontal = spacing.xl, vertical = spacing.lg)
             ) {
                 Text(
                     text = code,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.accentBlue400,
                     letterSpacing = androidx.compose.ui.unit.TextUnit(2f, androidx.compose.ui.unit.TextUnitType.Sp)
@@ -279,45 +298,48 @@ private fun ReferralCodeCard(
             }
             
             if (codeCopied) {
-                Spacer(modifier = Modifier.height(spacing.xs))
+                Spacer(modifier = Modifier.height(spacing.sm))
                 Text(
-                    text = "Copied to clipboard!",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "✓ Copied to clipboard!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
                     color = colors.profit
                 )
             }
             
-            Spacer(modifier = Modifier.height(spacing.md))
+            Spacer(modifier = Modifier.height(spacing.lg))
             
             Row(
-                horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedButton(
                     onClick = onCopy,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(spacing.xs))
-                    Text("Copy")
+                    Spacer(modifier = Modifier.width(spacing.sm))
+                    Text("Copy", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                 }
                 
                 Button(
                     onClick = onShare,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colors.accentBlue400)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(spacing.xs))
-                    Text("Share")
+                    Spacer(modifier = Modifier.width(spacing.sm))
+                    Text("Share", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                 }
             }
         }

@@ -65,9 +65,10 @@ import com.example.cryptovault.app.coindetail.domain.ChartTimeframe
 import com.example.cryptovault.app.coindetail.domain.CoinDetailData
 import com.example.cryptovault.app.coindetail.domain.CoinHoldings
 import com.example.cryptovault.app.components.AlertModal
+import com.example.cryptovault.app.components.BarChart
+import com.example.cryptovault.app.components.BarChartData
 import com.example.cryptovault.app.components.EmptyState
 import com.example.cryptovault.app.components.ErrorState
-import com.example.cryptovault.app.components.SimplePriceChart
 import com.example.cryptovault.app.components.SkeletonBox
 import com.example.cryptovault.app.components.SkeletonText
 import com.example.cryptovault.app.core.util.UiState
@@ -290,24 +291,18 @@ private fun CoinDetailHeader(coinData: CoinDetailData) {
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Coin icon
-        Box(
+        // Coin icon - 64dp with 16dp corner radius
+        AsyncImage(
+            model = coinData.iconUrl,
+            contentDescription = "${coinData.name} icon",
             modifier = Modifier
                 .size(64.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(colors.cardBackground),
-            contentAlignment = Alignment.Center
-        ) {
-            AsyncImage(
-                model = coinData.iconUrl,
-                contentDescription = "${coinData.name} icon",
-                modifier = Modifier.size(48.dp)
-            )
-        }
+        )
         
         Spacer(modifier = Modifier.width(spacing.md))
         
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = coinData.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -424,12 +419,14 @@ private fun PriceDisplayCard(
                 enter = fadeIn(animationSpec = tween(300)),
                 exit = fadeOut(animationSpec = tween(300))
             ) {
-                SimplePriceChart(
-                    prices = chartData,
+                BarChart(
+                    data = BarChartData(
+                        values = chartData.map { it.toDouble() },
+                        labels = emptyList()
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    isPositive = isPositive,
                     animate = true
                 )
             }
@@ -468,8 +465,15 @@ private fun TimeframeSelector(
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .background(
-                        if (isSelected) colors.accentBlue400.copy(alpha = 0.2f)
-                        else colors.backgroundSecondary
+                        if (isSelected) {
+                            Brush.horizontalGradient(
+                                colors = listOf(colors.accentBlue500, colors.accentPurple500)
+                            )
+                        } else {
+                            Brush.horizontalGradient(
+                                colors = listOf(SlateGradientStart, SlateGradientStart)
+                            )
+                        }
                     )
                     .clickable { onTimeframeSelected(timeframe) }
                     .padding(vertical = spacing.sm),
@@ -478,8 +482,8 @@ private fun TimeframeSelector(
                 Text(
                     text = timeframe.displayName,
                     style = MaterialTheme.typography.bodySmall,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) colors.accentBlue400 else colors.textSecondary
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isSelected) Color.White else colors.textSecondary
                 )
             }
         }
@@ -524,21 +528,27 @@ private fun QuickStatCard(
     
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(colors.cardBackground)
-            .padding(spacing.sm)
+            .clip(RoundedCornerShape(16.dp))
+            .background(colors.cardBackground.copy(alpha = 0.5f))
+            .border(
+                width = 1.dp,
+                color = colors.textSecondary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = spacing.lg, vertical = spacing.md)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = colors.textTertiary
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                color = colors.textSecondary
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(spacing.sm))
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
                 color = colors.textPrimary
             )
         }
@@ -596,12 +606,8 @@ private fun EnhancedStatCard(
     
     Box(
         modifier = modifier
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = colors.accentBlue400.copy(alpha = 0.2f)
-            )
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(colors.cardBackground.copy(alpha = 0.4f))
             .border(
                 width = 1.dp,
                 brush = Brush.linearGradient(
@@ -610,22 +616,22 @@ private fun EnhancedStatCard(
                         colors.accentPurple400.copy(alpha = 0.3f)
                     )
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(20.dp)
             )
-            .background(colors.cardBackground)
             .padding(spacing.md)
     ) {
         Column {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
                 color = colors.textSecondary
             )
-            Spacer(modifier = Modifier.height(spacing.xs))
+            Spacer(modifier = Modifier.height(spacing.md))
             Text(
                 text = value,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
                 color = colors.textPrimary
             )
         }

@@ -21,7 +21,6 @@ import com.example.cryptovault.app.coindetail.presentation.CoinDetailScreen
 import com.example.cryptovault.app.coins.presentation.CoinsListScreen
 import com.example.cryptovault.app.compare.presentation.CompareScreen
 import com.example.cryptovault.app.dca.presentation.DCAScreen
-import com.example.cryptovault.app.leaderboard.presentation.LeaderboardScreen
 import com.example.cryptovault.app.main.presentation.MainScreen
 import com.example.cryptovault.app.onboarding.data.OnboardingRepository
 import com.example.cryptovault.app.onboarding.presentation.OnboardingScreen
@@ -103,9 +102,6 @@ fun Navigation(
                 },
                 onCompareClick = {
                     navController.navigate(Screens.Compare)
-                },
-                onLeaderboardClick = {
-                    navController.navigate(Screens.Leaderboard)
                 },
                 onReferralClick = {
                     navController.navigate(Screens.Referral)
@@ -239,26 +235,6 @@ fun Navigation(
             }
         ) {
             ReferralScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-        
-        // Leaderboard Screen with slide transition
-        composable<Screens.Leaderboard>(
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(ANIMATION_DURATION)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(ANIMATION_DURATION)
-                )
-            }
-        ) {
-            LeaderboardScreen(
                 onBack = { navController.popBackStack() }
             )
         }

@@ -36,7 +36,4 @@ sealed interface Screens {
     
     @Serializable
     data object Referral : Screens
-    
-    @Serializable
-    data object Leaderboard : Screens
 }

@@ -14,7 +14,6 @@ import com.example.cryptovault.app.core.database.portfolio.getPortfolioDatabase
 import com.example.cryptovault.app.core.network.HttpClientFactory
 import com.example.cryptovault.app.dca.data.DCARepository
 import com.example.cryptovault.app.dca.presentation.DCAViewModel
-import com.example.cryptovault.app.leaderboard.presentation.LeaderboardViewModel
 import com.example.cryptovault.app.onboarding.data.OnboardingRepository
 import com.example.cryptovault.app.onboarding.presentation.OnboardingViewModel
 import com.example.cryptovault.app.portfolio.data.PortfolioRepositoryImpl
@@ -111,6 +110,5 @@ val sharedModule = module {
     viewModel { CoinDetailViewModel(get(), get(), get()) }
     viewModel { DCAViewModel(get()) }
     viewModel { CompareViewModel(get()) }
-    viewModel { LeaderboardViewModel() }
     viewModel { OnboardingViewModel(get()) }
 }
