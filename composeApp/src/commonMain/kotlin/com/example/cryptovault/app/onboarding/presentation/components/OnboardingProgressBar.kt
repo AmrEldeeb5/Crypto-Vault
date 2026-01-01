@@ -93,16 +93,16 @@ fun OnboardingProgressBar(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
                             .background(colors.cardBackground)
                     ) {
                         if (isActive) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(animatedWidth)
-                                    .height(4.dp)
-                                    .clip(RoundedCornerShape(2.dp))
+                                    .height(6.dp)
+                                    .clip(RoundedCornerShape(3.dp))
                                     .background(stepGradient)
                             )
                         }

@@ -18,6 +18,7 @@ package com.example.cryptovault.app.onboarding.presentation.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -60,6 +61,7 @@ import com.example.cryptovault.theme.CoinRoutineTheme
 import com.example.cryptovault.theme.LocalCryptoAccessibility
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Selectable card for cryptocurrency selection.
@@ -145,20 +147,13 @@ fun CoinSelectionCard(
                     modifier = Modifier
                         .size(dimensions.coinIconSize)
                         .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
-                        .then(
-                            if (isSelected) {
-                                Modifier.background(Color.White.copy(alpha = 0.2f))
-                            } else {
-                                Modifier.background(Brush.linearGradient(coin.gradientColors))
-                            }
-                        ),
+                        .background(Color.White),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = coin.icon,
-                        fontSize = (dimensions.coinIconSize.value * 0.5f).sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                    Image(
+                        painter = painterResource(coin.iconRes),
+                        contentDescription = "${coin.name} icon",
+                        modifier = Modifier.size(dimensions.coinIconSize * 0.85f)
                     )
                 }
                 

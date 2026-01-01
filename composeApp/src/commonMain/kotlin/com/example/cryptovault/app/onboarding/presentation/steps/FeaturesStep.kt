@@ -48,7 +48,6 @@ import com.example.cryptovault.theme.AppTheme
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
 import cryptovault.composeapp.generated.resources.Res
-import cryptovault.composeapp.generated.resources.material_symbols__electric_bolt_outline_rounded
 import cryptovault.composeapp.generated.resources.material_symbols__shield_outline_rounded
 import org.jetbrains.compose.resources.painterResource
 
@@ -136,7 +135,6 @@ fun FeaturesHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        
         Spacer(modifier = Modifier.height(72.dp))
         
         Text(

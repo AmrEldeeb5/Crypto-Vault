@@ -63,6 +63,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -205,45 +208,71 @@ fun OnboardingScreen(
                             .fillMaxWidth()
                             .padding(horizontal = dimensions.screenPadding)
                     )
-                    
-                    Spacer(modifier = Modifier.height(dimensions.screenPadding))
 
-                    // Back button (text) - only visible on steps > 0
+                    Spacer(modifier = Modifier.height(dimensions.smallSpacing))
+
+                    // Back button - styled similar to Continue button but with outline style
                     AnimatedVisibility(
                         visible = state.currentStep > 0,
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
-                        Text(
-                            text = "Back",
-                            style = typography.bodyMedium,
-                            color = colors.textSecondary,
-                            textAlign = TextAlign.Center,
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .height(dimensions.buttonHeight)
+                                .padding(horizontal = dimensions.screenPadding)
+                                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
+                                .background(Color.Transparent)
+                                .border(
+                                    width = 2.dp,
+                                    brush = stepGradient,
+                                    shape = RoundedCornerShape(dimensions.cardCornerRadius)
+                                )
                                 .clickable { viewModel.onEvent(OnboardingEvent.PreviousStep) }
-                                .padding(vertical = dimensions.smallSpacing / 2)
-                        )
-                        Spacer(modifier = Modifier.height(dimensions.screenPadding))
+                                .semantics {
+                                    role = androidx.compose.ui.semantics.Role.Button
+                                    contentDescription = "Back"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Back",
+                                style = typography.labelLarge,
+                                color = Color.White
+                            )
+                        }
                     }
+                    
+                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
                 }
             }
 
-            // Skip for now text - OUTSIDE the card (only on steps 0-2)
+            // Skip for now button - OUTSIDE the card (only on steps 0-2)
             if (state.currentStep < 3) {
                 Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-                Text(
-                    text = "Skip for now",
-                    style = typography.bodyMedium,
-                    color = colors.textSecondary,
-                    textAlign = TextAlign.Center,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = dimensions.screenPadding * 2)
+                        .clip(RoundedCornerShape(dimensions.cardCornerRadius))
+                        .background(colors.textSecondary.copy(alpha = 0.1f))
                         .clickable { viewModel.onEvent(OnboardingEvent.SkipToEnd) }
-                        .padding(vertical = dimensions.smallSpacing / 2)
-                )
-                Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-
+                        .padding(vertical = dimensions.smallSpacing)
+                        .semantics {
+                            role = androidx.compose.ui.semantics.Role.Button
+                            contentDescription = "Skip onboarding"
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Skip for now",
+                        style = typography.bodyMedium,
+                        color = colors.textSecondary.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.height(dimensions.screenPadding))
             }
 
         }
