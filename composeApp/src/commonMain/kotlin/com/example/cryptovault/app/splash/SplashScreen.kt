@@ -34,10 +34,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,11 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cryptovault.app.splash.components.AnimatedLogo
 import com.example.cryptovault.app.splash.components.FloatingParticles
 import com.example.cryptovault.app.splash.components.GradientText
 import com.example.cryptovault.app.splash.components.SplashProgressBar
@@ -67,7 +61,13 @@ import com.example.cryptovault.theme.Slate600
 import com.example.cryptovault.theme.Slate700
 import com.example.cryptovault.theme.Slate800
 import com.example.cryptovault.theme.Yellow400
+import cryptovault.composeapp.generated.resources.Res
+import cryptovault.composeapp.generated.resources.material_symbols__electric_bolt_outline_rounded
+import cryptovault.composeapp.generated.resources.material_symbols__finance_mode_rounded
+import cryptovault.composeapp.generated.resources.material_symbols__lock_outline
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Splash screen composable with animated loading sequence.
@@ -132,9 +132,7 @@ fun SplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(32.dp)
         ) {
-            // Animated logo
-            AnimatedLogo()
-            
+
             Spacer(modifier = Modifier.height(32.dp))
             
             // App name with gradient
@@ -165,7 +163,7 @@ fun SplashScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FeaturePill(
-                    icon = Icons.Default.Refresh,
+                    icon = Res.drawable.material_symbols__electric_bolt_outline_rounded,
                     text = "Real-time",
                     color = Yellow400
                 )
@@ -173,7 +171,7 @@ fun SplashScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 FeaturePill(
-                    icon = Icons.Default.Lock,
+                    icon = Res.drawable.material_symbols__lock_outline,
                     text = "Secure",
                     color = Emerald400
                 )
@@ -181,7 +179,7 @@ fun SplashScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 FeaturePill(
-                    icon = Icons.Default.Star,
+                    icon = Res.drawable.material_symbols__finance_mode_rounded,
                     text = "Analytics",
                     color = Blue400
                 )
@@ -232,7 +230,7 @@ fun SplashScreen(
  */
 @Composable
 private fun FeaturePill(
-    icon: ImageVector,
+    icon: DrawableResource,
     text: String,
     color: Color
 ) {
@@ -252,7 +250,7 @@ private fun FeaturePill(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(icon),
             contentDescription = text,
             tint = color,
             modifier = Modifier.size(14.dp)
