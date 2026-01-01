@@ -119,53 +119,6 @@ fun WelcomeHeader(
     val colors = LocalCryptoColors.current
     val typography = LocalCryptoTypography.current
     val dimensions = AppTheme.dimensions
-    val accessibility = LocalCryptoAccessibility.current
-    val reduceMotion = accessibility.reduceMotion
-
-    // Animated values - static when reduce motion is enabled
-    val iconScale: Float
-    val pingScale: Float
-    val pingAlpha: Float
-
-    if (reduceMotion) {
-        iconScale = 1f
-        pingScale = 1f
-        pingAlpha = 0f
-    } else {
-        val infiniteTransition = rememberInfiniteTransition()
-
-        // Pulse animation for icon
-        val animatedIconScale by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = 1.05f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(3000),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-        iconScale = animatedIconScale
-
-        // Ping animation for outer circle
-        val animatedPingScale by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = 1.3f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1500),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        pingScale = animatedPingScale
-
-        val animatedPingAlpha by infiniteTransition.animateFloat(
-            initialValue = 0.5f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1500),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        pingAlpha = animatedPingAlpha
-    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -190,7 +143,7 @@ fun WelcomeHeader(
         Text(
             text = "Your premium crypto tracking companion",
             style = typography.bodyLarge,
-            color = colors.textSecondary,
+            color = colors.textTertiary.copy(alpha = 0.8f),
             textAlign = TextAlign.Center
         )
     }
@@ -233,7 +186,6 @@ fun WelcomeFeatureCard(
 
     val alpha = if (isVisible) 1f else 0f
     val cardShape = RoundedCornerShape(dimensions.cardCornerRadius)
-    // React: bg-slate-800/50 border border-slate-700/50
     val slateBackground = Color(0xFF1E293B).copy(alpha = 0.5f)
     val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
 
@@ -286,7 +238,7 @@ fun WelcomeFeatureCard(
                 Text(
                     text = feature.description,
                     style = typography.bodySmall,
-                    color = colors.textSecondary
+                    color = colors.textTertiary.copy(alpha = 0.8f)
                 )
             }
         }

@@ -125,22 +125,8 @@ fun CoinSelectionHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // BarChart icon section
-        Box(
-            modifier = Modifier
-                .size(dimensions.appIconSize)
-                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.accentPink500, colors.loss)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "📊", fontSize = (dimensions.appIconSize.value * 0.5f).sp)
-        }
-        
-        Spacer(modifier = Modifier.height(dimensions.itemSpacing))
+
+        Spacer(modifier = Modifier.height(56.dp))
         
         Text(
             text = "Choose Your Favorites",

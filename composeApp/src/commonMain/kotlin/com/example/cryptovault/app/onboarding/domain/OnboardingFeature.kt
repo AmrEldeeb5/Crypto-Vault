@@ -28,24 +28,14 @@ import org.jetbrains.compose.resources.DrawableResource
  * @property resource The drawable resource representing this icon
  */
 enum class OnboardingIcon(val resource: DrawableResource) {
-    /** Trending/chart icon for price-related features */
+
+    ANALYTICS (Res.drawable.material_symbols__bar_chart_4_bars_rounded),
     TRENDING_UP(Res.drawable.material_symbols__finance_mode_rounded),
-    /** Bell icon for notification features */
     NOTIFICATIONS(Res.drawable.material_symbols__notifications_outline),
-    /** Wallet icon for portfolio features */
     WALLET(Res.drawable.material_symbols__account_balance_wallet_outline),
-    /** Shield icon for security features */
     SHIELD(Res.drawable.material_symbols__shield_outline_rounded)
 }
 
-/**
- * Data class representing a feature displayed during onboarding.
- *
- * @property iconType The type of icon to display
- * @property title The feature title text
- * @property description Brief description of the feature
- * @property gradientColors Colors for the icon's gradient background
- */
 data class OnboardingFeature(
     val iconType: OnboardingIcon,
     val title: String,
@@ -53,12 +43,6 @@ data class OnboardingFeature(
     val gradientColors: List<Color>
 )
 
-/**
- * Features displayed on the welcome step.
- *
- * These are the main value propositions shown when users first
- * open the onboarding flow, highlighting key app capabilities.
- */
 val welcomeFeatures = listOf(
     OnboardingFeature(
         iconType = OnboardingIcon.TRENDING_UP,
@@ -97,7 +81,7 @@ val welcomeFeatures = listOf(
  */
 val gridFeatures = listOf(
     OnboardingFeature(
-        iconType = OnboardingIcon.TRENDING_UP,
+        iconType = OnboardingIcon.ANALYTICS,
         title = "Real-Time Prices",
         description = "Live updates every second",
         gradientColors = listOf(
@@ -134,51 +118,7 @@ val gridFeatures = listOf(
     )
 )
 
-/**
- * Data class representing a notification type option.
- *
- * Used in the notifications step to show different notification
- * categories users can enable.
- *
- * @property iconType The type of icon to display
- * @property title The notification type title
- * @property description Explanation of what this notification does
- * @property statusText Text showing notification frequency/timing
- * @property gradientColors Colors for the icon's gradient background
- */
-data class NotificationType(
-    val iconType: OnboardingIcon,
-    val title: String,
-    val description: String,
-    val statusText: String,
-    val gradientColors: List<Color>
-)
 
-/**
- * Notification types displayed on the notifications step.
- *
- * Shows the different categories of notifications users can
- * receive, each with timing/frequency information.
- */
-val notificationTypes = listOf(
-    NotificationType(
-        iconType = OnboardingIcon.TRENDING_UP,
-        title = "Price Movement Alerts",
-        description = "Get notified when prices hit your targets",
-        statusText = "Real-time notifications",
-        gradientColors = listOf(
-            Color(0xFF34D399), // emerald-400
-            Color(0xFF14B8A6)  // teal-500
-        )
-    ),
-    NotificationType(
-        iconType = OnboardingIcon.WALLET,
-        title = "Portfolio Updates",
-        description = "Daily summaries of your portfolio performance",
-        statusText = "Daily at 9:00 AM",
-        gradientColors = listOf(
-            Color(0xFF3B82F6), // blue-500
-            Color(0xFFA855F7)  // purple-500
-        )
-    )
-)
+
+
+

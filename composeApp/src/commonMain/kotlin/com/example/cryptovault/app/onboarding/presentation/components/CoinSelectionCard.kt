@@ -203,29 +203,4 @@ fun CoinSelectionCard(
     }
 }
 
-@org.jetbrains.compose.ui.tooling.preview.Preview
-@Composable
-fun CoinSelectionCardPreview() {
-    val btc = popularCoins[0]
-    val eth = popularCoins[1]
-    
-    CoinRoutineTheme {
-        Row(
-            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            CoinSelectionCard(
-                coin = btc,
-                isSelected = true,
-                onToggle = {},
-                modifier = Modifier.weight(1f)
-            )
-            CoinSelectionCard(
-                coin = eth,
-                isSelected = false,
-                onToggle = {},
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
+

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,11 +41,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cryptovault.app.onboarding.domain.OnboardingFeature
 import com.example.cryptovault.app.onboarding.domain.gridFeatures
 import com.example.cryptovault.app.onboarding.presentation.components.FeatureCard
 import com.example.cryptovault.theme.AppTheme
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
+import cryptovault.composeapp.generated.resources.Res
+import cryptovault.composeapp.generated.resources.material_symbols__electric_bolt_outline_rounded
+import cryptovault.composeapp.generated.resources.material_symbols__shield_outline_rounded
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Features step content for onboarding.
@@ -129,25 +135,9 @@ fun FeaturesHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Zap icon in gradient rounded square
-        Box(
-            modifier = Modifier
-                .size(dimensions.appIconSize + 16.dp)
-                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.accentPurple500, colors.accentPink500)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "⚡",
-                fontSize = (dimensions.appIconSize.value * 0.5f).sp
-            )
-        }
+
         
-        Spacer(modifier = Modifier.height(dimensions.smallSpacing))
+        Spacer(modifier = Modifier.height(72.dp))
         
         Text(
             text = "Everything You Need",
@@ -162,7 +152,7 @@ fun FeaturesHeader(
         Text(
             text = "Track, analyze, and stay ahead of the market",
             style = typography.bodyMedium,
-            color = colors.textSecondary,
+            color = colors.textTertiary,
             textAlign = TextAlign.Center
         )
     }
@@ -196,9 +186,10 @@ fun FreeForeverBanner(
             .padding(dimensions.cardPadding)
     ) {
         Row(verticalAlignment = Alignment.Top) {
-            Text(
-                text = "🛡️",
-                fontSize = (dimensions.coinIconSize.value * 0.42f).sp
+            Icon(painter = painterResource(Res.drawable.material_symbols__shield_outline_rounded),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(dimensions.coinIconSize * 1f)
             )
             Spacer(modifier = Modifier.width(dimensions.itemSpacing))
             Column {
@@ -210,9 +201,9 @@ fun FreeForeverBanner(
                 )
                 Spacer(modifier = Modifier.height(dimensions.smallSpacing / 2))
                 Text(
-                    text = "No credit card required. All premium features included.",
-                    style = typography.bodySmall,
-                    color = colors.textSecondary
+                    text = "No credit card required.\nAll premium features included.",
+                    style = typography.labelSmall,
+                    color = colors.textTertiary
                 )
             }
         }

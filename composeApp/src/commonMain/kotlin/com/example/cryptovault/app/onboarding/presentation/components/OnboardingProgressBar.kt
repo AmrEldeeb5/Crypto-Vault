@@ -66,7 +66,7 @@ fun OnboardingProgressBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = dimensions.itemSpacing * 2)
+            .padding(horizontal = dimensions.itemSpacing)
             .semantics { contentDescription = accessibilityDescription }
     ) {
         // Row with "Step X of 4" on left, progress segments in middle, percentage on right

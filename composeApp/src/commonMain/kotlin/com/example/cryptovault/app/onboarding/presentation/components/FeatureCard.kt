@@ -152,7 +152,7 @@ fun FeatureCard(
             Text(
                 text = feature.description,
                 style = typography.bodySmall,
-                color = colors.textSecondary
+                color = colors.textTertiary.copy(alpha = 0.8f)
             )
         }
     }
