@@ -206,7 +206,7 @@ fun OnboardingScreen(
                             .padding(horizontal = dimensions.screenPadding)
                     )
                     
-                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+                    Spacer(modifier = Modifier.height(dimensions.screenPadding))
 
                     // Back button (text) - only visible on steps > 0
                     AnimatedVisibility(
@@ -224,16 +224,14 @@ fun OnboardingScreen(
                                 .clickable { viewModel.onEvent(OnboardingEvent.PreviousStep) }
                                 .padding(vertical = dimensions.smallSpacing / 2)
                         )
+                        Spacer(modifier = Modifier.height(dimensions.screenPadding))
                     }
-                    
-                    Spacer(modifier = Modifier.height(dimensions.smallSpacing))
                 }
             }
-            
-            Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-            
+
             // Skip for now text - OUTSIDE the card (only on steps 0-2)
             if (state.currentStep < 3) {
+                Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
                 Text(
                     text = "Skip for now",
                     style = typography.bodyMedium,
@@ -244,9 +242,10 @@ fun OnboardingScreen(
                         .clickable { viewModel.onEvent(OnboardingEvent.SkipToEnd) }
                         .padding(vertical = dimensions.smallSpacing / 2)
                 )
+                Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+
             }
-            
-            Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+
         }
         
         // Skip confirmation dialog
