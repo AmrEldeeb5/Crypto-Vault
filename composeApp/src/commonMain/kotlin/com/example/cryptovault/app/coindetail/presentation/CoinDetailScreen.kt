@@ -529,7 +529,7 @@ private fun QuickStatCard(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(colors.cardBackground.copy(alpha = 0.5f))
+            .background(colors.cardBackground.copy(alpha = 0.4f))
             .border(
                 width = 1.dp,
                 color = colors.textSecondary.copy(alpha = 0.1f),
@@ -542,12 +542,12 @@ private fun QuickStatCard(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
-                color = colors.textSecondary
+                color = colors.textTertiary.copy(alpha = 0.8f)
             )
             Spacer(modifier = Modifier.height(spacing.sm))
             Text(
                 text = value,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary
             )
@@ -625,7 +625,7 @@ private fun EnhancedStatCard(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = colors.textSecondary
+                color = colors.textTertiary.copy(alpha = 0.8f)
             )
             Spacer(modifier = Modifier.height(spacing.md))
             Text(

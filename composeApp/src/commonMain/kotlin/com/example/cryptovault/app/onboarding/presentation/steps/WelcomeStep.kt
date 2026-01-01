@@ -26,10 +26,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +58,7 @@ import com.example.cryptovault.theme.LocalCryptoAccessibility
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Welcome step content for onboarding.
@@ -82,6 +86,7 @@ fun WelcomeStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing)
     ) {
+        Spacer(modifier = Modifier.height(72.dp))
         WelcomeHeader()
         
         // Feature highlight cards
@@ -260,9 +265,11 @@ fun WelcomeFeatureCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = feature.iconType.emoji,
-                    fontSize = (dimensions.coinIconSize.value * 0.4f).sp
+                Icon(
+                    painter = painterResource(feature.iconType.resource),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(dimensions.coinIconSize * 0.7f)
                 )
             }
 

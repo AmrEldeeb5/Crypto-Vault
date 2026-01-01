@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +53,7 @@ import com.example.cryptovault.theme.LocalCryptoAccessibility
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 
 // React color constants: slate-800 = #1E293B, slate-700 = #334155
 private val SlateBackground = Color(0xFF1E293B)
@@ -126,9 +128,11 @@ fun FeatureCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = feature.iconType.emoji,
-                    style = typography.titleMedium
+                Icon(
+                    painter = painterResource(feature.iconType.resource),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(dimensions.coinIconSize * 0.6f)
                 )
             }
             
@@ -154,111 +158,4 @@ fun FeatureCard(
     }
 }
 
-/**
- * Compact feature card with horizontal layout.
- *
- * Displays feature icon, title, and description in a row format.
- * Suitable for tighter layouts or lists.
- *
- * @param feature The feature to display
- * @param index Position in list for staggered animation (default 0)
- * @param animateIn Whether to animate entrance (default true)
- * @param modifier Optional modifier for the component
- */
-@Composable
-fun CompactFeatureCard(
-    feature: OnboardingFeature,
-    index: Int = 0,
-    animateIn: Boolean = true,
-    modifier: Modifier = Modifier
-) {
-    val colors = LocalCryptoColors.current
-    val typography = LocalCryptoTypography.current
-    val accessibility = LocalCryptoAccessibility.current
-    val reduceMotion = accessibility.reduceMotion
-    
-    // Skip animation if reduce motion is enabled
-    val shouldAnimate = animateIn && !reduceMotion
-    var isVisible by remember { mutableStateOf(!shouldAnimate) }
-    
-    LaunchedEffect(shouldAnimate) {
-        if (shouldAnimate) {
-            delay(index * 100L)
-            isVisible = true
-        }
-    }
-    
-    val alpha by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = if (reduceMotion) 0 else 300)
-    )
-    
-    val cardShape = RoundedCornerShape(16.dp)
-    
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(alpha)
-            .clip(cardShape)
-            // React: bg-slate-800/50 - more transparent/darker
-            .background(SlateBackground.copy(alpha = 0.3f))
-            .border(
-                width = 1.dp,
-                color = SlateBorder.copy(alpha = 0.5f),
-                shape = cardShape
-            )
-            .padding(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Icon with rounded square background
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        Brush.linearGradient(feature.gradientColors)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = feature.iconType.emoji,
-                    style = typography.titleMedium
-                )
-            }
-            
-            Spacer(modifier = Modifier.size(16.dp))
-            
-            Column {
-                Text(
-                    text = feature.title,
-                    style = typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colors.textPrimary
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = feature.description,
-                    style = typography.bodySmall,
-                    color = colors.textSecondary
-                )
-            }
-        }
-    }
-}
 
-@org.jetbrains.compose.ui.tooling.preview.Preview
-@Composable
-fun FeatureCardPreview() {
-    val feature = welcomeFeatures[0]
-    CoinRoutineTheme {
-        Column(
-            modifier = Modifier.background(Color(0xFF0F172A)).padding(16.dp),
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
-        ) {
-            FeatureCard(feature = feature)
-            CompactFeatureCard(feature = feature)
-        }
-    }
-}

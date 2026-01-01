@@ -12,25 +12,30 @@
 package com.example.cryptovault.app.onboarding.domain
 
 import androidx.compose.ui.graphics.Color
+import cryptovault.composeapp.generated.resources.Res
+import cryptovault.composeapp.generated.resources.material_symbols__account_balance_wallet_outline
+import cryptovault.composeapp.generated.resources.material_symbols__bar_chart_4_bars_rounded
+import cryptovault.composeapp.generated.resources.material_symbols__finance_mode_rounded
+import cryptovault.composeapp.generated.resources.material_symbols__notifications_outline
+import cryptovault.composeapp.generated.resources.material_symbols__shield_outline_rounded
+import org.jetbrains.compose.resources.DrawableResource
 
 /**
  * Enum representing icon types used in onboarding feature cards.
  *
- * Each icon type maps to an emoji for cross-platform display.
+ * Each icon type maps to a drawable resource for cross-platform display.
  *
- * @property emoji The emoji character representing this icon
+ * @property resource The drawable resource representing this icon
  */
-enum class OnboardingIcon(val emoji: String) {
+enum class OnboardingIcon(val resource: DrawableResource) {
     /** Trending/chart icon for price-related features */
-    TRENDING_UP("📈"),
+    TRENDING_UP(Res.drawable.material_symbols__finance_mode_rounded),
     /** Bell icon for notification features */
-    NOTIFICATIONS("🔔"),
+    NOTIFICATIONS(Res.drawable.material_symbols__notifications_outline),
     /** Wallet icon for portfolio features */
-    WALLET("💰"),
+    WALLET(Res.drawable.material_symbols__account_balance_wallet_outline),
     /** Shield icon for security features */
-    SHIELD("🛡️"),
-    /** Sparkles icon for special/premium features */
-    SPARKLES("✨")
+    SHIELD(Res.drawable.material_symbols__shield_outline_rounded)
 }
 
 /**
@@ -174,16 +179,6 @@ val notificationTypes = listOf(
         gradientColors = listOf(
             Color(0xFF3B82F6), // blue-500
             Color(0xFFA855F7)  // purple-500
-        )
-    ),
-    NotificationType(
-        iconType = OnboardingIcon.SPARKLES,
-        title = "Market Insights",
-        description = "Important news and market movements",
-        statusText = "As they happen",
-        gradientColors = listOf(
-            Color(0xFFEC4899), // pink-500
-            Color(0xFFFB7185)  // rose-400
         )
     )
 )

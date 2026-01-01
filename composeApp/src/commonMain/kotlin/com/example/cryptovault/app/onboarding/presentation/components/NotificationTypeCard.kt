@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cryptovault.app.onboarding.domain.NotificationType
 import com.example.cryptovault.theme.LocalCryptoColors
 import com.example.cryptovault.theme.LocalCryptoTypography
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Card displaying a notification type option.
@@ -101,9 +103,11 @@ fun NotificationTypeCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = notificationType.iconType.emoji,
-                    style = typography.titleMedium
+                Icon(
+                    painter = painterResource(notificationType.iconType.resource),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
                 )
             }
             
