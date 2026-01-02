@@ -99,17 +99,17 @@ fun FeatureCard(
         animationSpec = tween(durationMillis = if (reduceMotion) 0 else 300)
     )
     
-    // Plain layout - no container
+    // Plain layout - no container, compact for grid
     Column(
         modifier = modifier
-            .fillMaxWidth()
             .alpha(alpha)
-            .padding(dimensions.cardPadding)
+            .padding(dimensions.cardPadding),
+        horizontalAlignment = Alignment.Start
     ) {
         // Icon with softened gradient background
         Box(
             modifier = Modifier
-                .size(dimensions.coinIconSize * 0.9f)
+                .size(dimensions.coinIconSize * 0.85f)
                 .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
                 .background(
                     Brush.linearGradient(
@@ -122,7 +122,7 @@ fun FeatureCard(
                 painter = painterResource(feature.iconType.resource),
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.9f),
-                modifier = Modifier.size(dimensions.coinIconSize * 0.55f)
+                modifier = Modifier.size(dimensions.coinIconSize * 0.5f)
             )
         }
         

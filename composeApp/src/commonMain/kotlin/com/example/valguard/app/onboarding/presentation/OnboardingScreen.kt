@@ -30,6 +30,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +61,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +71,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -82,6 +88,7 @@ import com.example.valguard.theme.AppTheme
 import com.example.valguard.theme.LocalCryptoColors
 import com.example.valguard.theme.LocalCryptoTypography
 import com.example.valguard.theme.LocalCryptoTypography
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -107,9 +114,57 @@ fun OnboardingScreen(
     val typography = LocalCryptoTypography.current
     val dimensions = AppTheme.dimensions
     
+    // Pager state for swipe gestures
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 4 }
+    )
+    val coroutineScope = rememberCoroutineScope()
+    
     // Set navigation callback
     LaunchedEffect(Unit) {
         viewModel.setNavigationCallback(onComplete)
+    }
+    
+    // Sync pager with ViewModel state - consistent 300ms easing
+    LaunchedEffect(state.currentStep) {
+        if (pagerState.currentPage != state.currentStep && !state.isTransitioning) {
+            pagerState.animateScrollToPage(
+                page = state.currentStep,
+                animationSpec = tween(
+                    durationMillis = OnboardingViewModel.TRANSITION_DURATION_MS.toInt(),
+                    easing = androidx.compose.animation.core.FastOutSlowInEasing
+                )
+            )
+        }
+    }
+    
+    // Sync ViewModel with pager swipes
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            if (page != state.currentStep) {
+                // User swiped to a different page
+                if (page > state.currentStep) {
+                    // Swiped forward - check if can proceed
+                    if (page == 2 && state.selectedCoins.isEmpty()) {
+                        // Can't proceed to coin selection without selection
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(state.currentStep)
+                        }
+                    } else {
+                        // Update ViewModel to match pager
+                        repeat(page - state.currentStep) {
+                            viewModel.onEvent(OnboardingEvent.NextStep)
+                        }
+                    }
+                } else {
+                    // Swiped backward - always allowed
+                    repeat(state.currentStep - page) {
+                        viewModel.onEvent(OnboardingEvent.PreviousStep)
+                    }
+                }
+            }
+        }
     }
     
     val stepGradient = Brush.horizontalGradient(stepColors)
@@ -143,7 +198,10 @@ fun OnboardingScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensions.screenPadding),
+                    .padding(horizontal = dimensions.screenPadding)
+                    .semantics(mergeDescendants = false) {
+                        // Ensure navigation elements are separately discoverable
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -152,15 +210,21 @@ fun OnboardingScreen(
                 
                 // Progress dots - center
                 SimpleDotProgress(
-                    currentStep = state.currentStep,
+                    currentStep = pagerState.currentPage,
                     totalSteps = 4,
-                    activeColor = stepColors.first()
+                    activeColor = stepColors.first(),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Step ${pagerState.currentPage + 1} of 4"
+                    }
                 )
                 
                 // Skip button - top right (only on steps 0-2)
-                if (state.currentStep < 3) {
+                if (pagerState.currentPage < 3) {
                     TextButton(
-                        onClick = { viewModel.onEvent(OnboardingEvent.SkipToEnd) }
+                        onClick = { viewModel.onEvent(OnboardingEvent.SkipToEnd) },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Skip onboarding and go to final step"
+                        }
                     ) {
                         Text(
                             text = "Skip",
@@ -175,31 +239,33 @@ fun OnboardingScreen(
             
             Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
             
-            // Scrollable content area - no container
-            Box(
+            // Swipeable content area with HorizontalPager
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                    .fillMaxWidth(),
+                userScrollEnabled = true // Enable swipe gestures
+            ) { page ->
+                // Responsive max-width container for tablets
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter
                 ) {
-                    // Step content with animated transitions
-                    AnimatedContent(
-                        targetState = state.currentStep,
-                        transitionSpec = {
-                            if (targetState > initialState) {
-                                slideInHorizontally { it } + fadeIn() togetherWith
-                                    slideOutHorizontally { -it } + fadeOut()
-                            } else {
-                                slideInHorizontally { -it } + fadeIn() togetherWith
-                                    slideOutHorizontally { it } + fadeOut()
-                            }
-                        }
-                    ) { step ->
-                        when (step) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                // Limit content width on tablets to prevent over-wide layouts
+                                if (dimensions.screenPadding > 24.dp) {
+                                    Modifier.padding(horizontal = dimensions.screenPadding)
+                                } else {
+                                    Modifier
+                                }
+                            )
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        when (page) {
                             0 -> WelcomeStep()
                             1 -> FeaturesStep()
                             2 -> CoinSelectionStep(
@@ -211,9 +277,9 @@ fun OnboardingScreen(
                                 onToggleNotifications = { viewModel.onEvent(OnboardingEvent.ToggleNotifications) }
                             )
                         }
+                        
+                        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
                     }
-                    
-                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
                 }
             }
             

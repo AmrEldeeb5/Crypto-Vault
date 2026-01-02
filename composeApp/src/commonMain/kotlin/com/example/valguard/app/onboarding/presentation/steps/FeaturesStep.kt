@@ -37,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,18 +79,43 @@ fun FeaturesStep(
         
         Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 4))
         
-        // Show only 2 features - clean and focused
+        // 2x2 grid of features
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing * 2)
         ) {
-            FeatureCard(
-                feature = gridFeatures[0],
-                index = 0
-            )
-            FeatureCard(
-                feature = gridFeatures[1],
-                index = 1
-            )
+            // First row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+            ) {
+                FeatureCard(
+                    feature = gridFeatures[0],
+                    index = 0,
+                    modifier = Modifier.weight(1f)
+                )
+                FeatureCard(
+                    feature = gridFeatures[1],
+                    index = 1,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            
+            // Second row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+            ) {
+                FeatureCard(
+                    feature = gridFeatures[2],
+                    index = 2,
+                    modifier = Modifier.weight(1f)
+                )
+                FeatureCard(
+                    feature = gridFeatures[3],
+                    index = 3,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
         
         Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 4))
@@ -98,8 +125,11 @@ fun FeaturesStep(
             text = "✓ 100% free · No credit card required",
             style = typography.bodyMedium,
             fontWeight = FontWeight.Medium,
-            color = colors.textSecondary.copy(alpha = 0.85f),
-            textAlign = TextAlign.Center
+            color = colors.textSecondary.copy(alpha = 0.4f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics {
+                contentDescription = "100% free, no credit card required"
+            }
         )
     }
 }

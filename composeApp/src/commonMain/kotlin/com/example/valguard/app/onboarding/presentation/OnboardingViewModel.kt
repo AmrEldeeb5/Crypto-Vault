@@ -245,8 +245,8 @@ class OnboardingViewModel(
     }
     
     companion object {
-        /** Duration of step transition animations in milliseconds */
-        private const val TRANSITION_DURATION_MS = 300L
+        /** Duration of step transition animations in milliseconds - matches pager animation */
+        const val TRANSITION_DURATION_MS = 300L
         /** Duration of success animation before navigation in milliseconds */
         private const val SUCCESS_ANIMATION_DURATION_MS = 1500L
     }

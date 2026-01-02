@@ -49,8 +49,17 @@ fun OptimizedParticleSystem(
     
     val particleConfigs = remember(particleCount) {
         List(particleCount) { index ->
+            // Bias Y positions away from center (30-40% away from 0.4-0.6 range)
+            val rawY = Random.nextFloat()
+            val biasedY = if (rawY in 0.35f..0.65f) {
+                // If in center zone, push to edges
+                if (rawY < 0.5f) rawY - 0.15f else rawY + 0.15f
+            } else {
+                rawY
+            }.coerceIn(0f, 1f)
+            
             Triple(
-                Random.nextFloat(), // baseY
+                biasedY, // baseY - biased away from center
                 Random.nextFloat() * 4f + 3f, // size (3-7px, smaller than V1)
                 Random.nextInt(0, 3000) // delay
             )

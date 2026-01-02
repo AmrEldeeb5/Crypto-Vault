@@ -12,7 +12,8 @@ import androidx.compose.ui.graphics.Color
 import com.example.valguard.app.splash.domain.DeviceCapabilities
 
 /**
- * Simplified background with max 2 orbs.
+ * Simplified background with ONE orb (blue top-left).
+ * Blue = trust/security. One anchor point is calmer than symmetry.
  * Respects reduce motion and scales for old GPUs.
  */
 @Composable
@@ -49,33 +50,6 @@ fun SimplifiedBackground(
         )
     }
     
-    // Purple orb opacity animation (0.12 → 0.18 over 5s)
-    val purpleOrbAlpha by if (capabilities.reduceMotionEnabled) {
-        // Freeze at mid-opacity
-        infiniteTransition.animateFloat(
-            initialValue = 0.15f,
-            targetValue = 0.15f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "purple_alpha"
-        )
-    } else {
-        infiniteTransition.animateFloat(
-            initialValue = 0.12f,
-            targetValue = 0.18f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 5000,
-                    easing = FastOutSlowInEasing
-                ),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "purple_alpha"
-        )
-    }
-    
     // Reduce orb radius by 30% if old GPU
     val radiusMultiplier = if (capabilities.isOldGpu) 0.7f else 1.0f
     
@@ -83,7 +57,7 @@ fun SimplifiedBackground(
         val width = size.width
         val height = size.height
         
-        // Blue orb (top-left quadrant)
+        // Blue orb (top-left quadrant) - ONLY orb, creates calm anchor point
         val blueOrbRadius = 400f * radiusMultiplier
         drawCircle(
             brush = Brush.radialGradient(
@@ -98,19 +72,6 @@ fun SimplifiedBackground(
             center = Offset(width * 0.25f, height * 0.25f)
         )
         
-        // Purple orb (bottom-right quadrant)
-        val purpleOrbRadius = 450f * radiusMultiplier
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFF7C3AED).copy(alpha = purpleOrbAlpha),
-                    Color.Transparent
-                ),
-                center = Offset(width * 0.75f, height * 0.75f),
-                radius = purpleOrbRadius
-            ),
-            radius = purpleOrbRadius,
-            center = Offset(width * 0.75f, height * 0.75f)
-        )
+        // Purple orb REMOVED - one anchor point is calmer than diagonal symmetry
     }
 }

@@ -22,6 +22,8 @@ import kotlin.math.roundToInt
 /**
  * Real progress bar with phase-specific status text.
  * Shows actual initialization progress, not simulated.
+ * 
+ * De-emphasized design: progress = reassurance, not center stage.
  */
 @Composable
 fun RealProgressBar(
@@ -31,31 +33,13 @@ fun RealProgressBar(
 ) {
     val percentage = (progress * 100).roundToInt()
     
-    // Animated ellipsis for status text liveness
-    val infiniteTransition = rememberInfiniteTransition(label = "ellipsis")
-    val ellipsisState by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 3f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "ellipsis"
-    )
-    
-    val ellipsis = when (ellipsisState.toInt()) {
-        0 -> ""
-        1 -> "."
-        2 -> ".."
-        else -> "..."
-    }
-    
+    // Status text WITHOUT animated ellipsis - let progress bar be the only feedback
     val statusText = when (phase) {
-        is InitPhase.SecureStorage -> "Setting up secure storage$ellipsis"
-        is InitPhase.Database -> "Preparing database$ellipsis"
-        is InitPhase.Network -> "Connecting to network$ellipsis"
-        is InitPhase.Config -> "Loading configuration$ellipsis"
-        is InitPhase.UIReady -> "Almost ready$ellipsis"
+        is InitPhase.SecureStorage -> "Setting up secure storage"
+        is InitPhase.Database -> "Preparing database"
+        is InitPhase.Network -> "Connecting to network"
+        is InitPhase.Config -> "Loading configuration"
+        is InitPhase.UIReady -> "Almost ready"
     }
     
     Column(
@@ -71,24 +55,34 @@ fun RealProgressBar(
             Text(
                 text = "Loading...",
                 style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFF94A3B8).copy(alpha = 0.7f) // Slate400 with reduced opacity
+                color = Color(0xFF94A3B8).copy(alpha = 0.5f) // Reduced opacity (was 0.7f)
             )
             Text(
                 text = "$percentage%",
                 style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFFCBD5E1) // Slate300 - stronger than label
+                color = Color(0xFFCBD5E1).copy(alpha = 0.8f) // Slightly reduced (was 1.0f)
             )
         }
         
+        Spacer(modifier = Modifier.height(4.dp)) // Tighter spacing
+        
+        // Status text - moved above bar (Option A: cleaner, more system-like)
+        Text(
+            text = statusText,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color(0xFF64748B).copy(alpha = 0.8f),
+            modifier = Modifier.fillMaxWidth()
+        )
+        
         Spacer(modifier = Modifier.height(8.dp))
         
-        // Progress bar
+        // Progress bar - reduced height for de-emphasis
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color(0xFF1E293B)) // Slate800
+                .height(6.dp) // Reduced from 8dp
+                .clip(RoundedCornerShape(3.dp)) // Adjusted corner radius
+                .background(Color(0xFF1E293B).copy(alpha = 0.45f)) // Further reduced (was 0.6f) - bar emerges, not sits in container
                 .semantics {
                     progressBarRangeInfo = androidx.compose.ui.semantics.ProgressBarRangeInfo(
                         current = progress,
@@ -96,30 +90,21 @@ fun RealProgressBar(
                     )
                 }
         ) {
-            // Gradient fill
+            // Gradient fill with slightly reduced opacity
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(progress.coerceIn(0f, 1f))
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(3.dp))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFF2563EB), // Blue600
-                                Color(0xFF7C3AED)  // Purple600
+                                Color(0xFF2563EB).copy(alpha = 0.9f), // Keep fill exactly as-is
+                                Color(0xFF7C3AED).copy(alpha = 0.9f)  // Keep fill exactly as-is
                             )
                         )
                     )
             )
         }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Status text with animated ellipsis
-        Text(
-            text = statusText,
-            style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF64748B) // Slate500
-        )
     }
 }

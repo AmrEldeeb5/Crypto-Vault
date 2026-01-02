@@ -128,38 +128,19 @@ fun SplashScreen(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            // Tagline with gradient
+            // Tagline - calm, honest, no marketing fluff
             GradientText(
-                text = "Your Premium Crypto Companion",
+                text = "Secure. Simple. Crypto.",
                 style = MaterialTheme.typography.titleLarge
             )
             
-            Spacer(modifier = Modifier.height(64.dp)) // Reduced from 80dp - moves progress bar up
+            Spacer(modifier = Modifier.height(48.dp)) // Moved progress bar up (was 64dp)
             
             // Real progress bar with phase-specific status
             RealProgressBar(
                 progress = state.progress,
                 phase = state.currentPhase
             )
-            
-            Spacer(modifier = Modifier.height(80.dp)) // Increased spacing to push footer down
-            
-            // Version info
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Version 1.0.0",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF475569).copy(alpha = 0.6f) // Reduced opacity
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "© 2025 Valguard. All rights reserved.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF475569).copy(alpha = 0.6f) // Reduced opacity
-                )
-            }
         }
     }
 }
