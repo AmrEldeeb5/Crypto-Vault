@@ -79,19 +79,15 @@ fun WelcomeStep(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = dimensions.screenPadding,
-                vertical = dimensions.verticalSpacing * 2
-            ),
+            .padding(horizontal = dimensions.screenPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing)
+        verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing * 2)
     ) {
-        Spacer(modifier = Modifier.height(72.dp))
         WelcomeHeader()
         
-        // Feature highlight cards
+        // Feature highlight cards with more spacing
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+            verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing * 2)
         ) {
             welcomeFeatures.forEachIndexed { index, feature ->
                 WelcomeFeatureCard(
@@ -185,62 +181,51 @@ fun WelcomeFeatureCard(
     }
 
     val alpha = if (isVisible) 1f else 0f
-    val cardShape = RoundedCornerShape(dimensions.cardCornerRadius)
-    val slateBackground = Color(0xFF1E293B).copy(alpha = 0.5f)
-    val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
 
-    Box(
+    // Plain layout - no container, no background, no border
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .alpha(alpha)
-            .clip(cardShape)
-            .background(slateBackground)
-            .border(
-                width = 1.dp,
-                color = slateBorder,
-                shape = cardShape
-            )
-            .padding(dimensions.itemSpacing)
+            .padding(vertical = dimensions.itemSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing)
+        // Icon with softened gradient background
+        Box(
+            modifier = Modifier
+                .size(dimensions.coinIconSize * 0.9f)
+                .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
+                .background(
+                    Brush.linearGradient(
+                        feature.gradientColors.map { it.copy(alpha = 0.7f) }
+                    )
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            // Icon with gradient background (rounded-xl)
-            Box(
-                modifier = Modifier
-                    .size(dimensions.coinIconSize)
-                    .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
-                    .background(
-                        Brush.linearGradient(feature.gradientColors)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(feature.iconType.resource),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(dimensions.coinIconSize * 0.7f)
-                )
-            }
+            Icon(
+                painter = painterResource(feature.iconType.resource),
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.9f),
+                modifier = Modifier.size(dimensions.coinIconSize * 0.65f)
+            )
+        }
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-
-            ) {
-                Text(
-                    text = feature.title,
-                    style = typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colors.textPrimary
-                )
-                Text(
-                    text = feature.description,
-                    style = typography.bodySmall,
-                    color = colors.textTertiary.copy(alpha = 0.8f)
-                )
-            }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = feature.title,
+                style = typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(dimensions.smallSpacing / 2))
+            Text(
+                text = feature.description,
+                style = typography.bodyMedium,
+                color = colors.textTertiary.copy(alpha = 0.8f)
+            )
         }
     }
 }

@@ -84,75 +84,39 @@ fun NotificationsStep(
 ) {
     val colors = LocalCryptoColors.current
     val dimensions = AppTheme.dimensions
-    val accessibility = LocalCryptoAccessibility.current
-    val reduceMotion = accessibility.reduceMotion
-    
-    val infiniteTransition = rememberInfiniteTransition()
-    
-    // Pulsing animation for status dots
-    val pulseAlpha = if (reduceMotion) {
-        1f
-    } else {
-        val animatedPulse by infiniteTransition.animateFloat(
-            initialValue = 0.5f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1000),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-        animatedPulse
-    }
+    val typography = LocalCryptoTypography.current
     
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensions.screenPadding),
+            .padding(horizontal = dimensions.screenPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NotificationsHeader()
         
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 3))
         
-        // Notification type cards with pulsing status dots
+        // Single summary block - no individual cards
         Column(
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
         ) {
-            // Price Movement Alerts
-            NotificationInfoCard(
-                icon = Res.drawable.material_symbols__finance_mode_rounded,
-                iconGradient = listOf(colors.profit, Color(0xFF14B8A6)),
-                title = "Price Movement Alerts",
-                description = "Get notified when prices hit your targets",
-                statusText = "Real-time notifications",
-                statusDotColor = colors.profit,
-                pulseAlpha = pulseAlpha
+            Text(
+                text = "Stay informed with:",
+                style = typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.textPrimary
             )
             
-            // Portfolio Updates
-            NotificationInfoCard(
-                icon = Res.drawable.material_symbols__account_balance_wallet_outline,
-                iconGradient = listOf(colors.accentBlue500, colors.accentPurple500),
-                title = "Portfolio Updates",
-                description = "Daily summaries of your portfolio performance",
-                statusText = "Daily at 9:00 AM",
-                statusDotColor = colors.accentBlue500,
-                pulseAlpha = pulseAlpha
-            )
-
-            // Market Insights
-            NotificationInfoCard(
-                icon = Res.drawable.material_symbols__query_stats_rounded,
-                iconGradient = listOf(colors.accentPink500, colors.loss),
-                title = "Market Insights",
-                description = "Important news and market movements",
-                statusText = "As they happen",
-                statusDotColor = colors.accentPink500,
-                pulseAlpha = pulseAlpha
-            )
+            Spacer(modifier = Modifier.height(dimensions.smallSpacing))
+            
+            // Simple bullet list
+            NotificationBullet("Price alerts when targets are hit")
+            NotificationBullet("Daily portfolio summaries")
+            NotificationBullet("Important market movements")
         }
         
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 3))
         
         EnableNotificationsToggle(
             enabled = notificationsEnabled,
@@ -163,10 +127,39 @@ fun NotificationsStep(
         
         // Disclaimer text
         Text(
-            text = "You can customize notification preferences anytime in settings",
-            style = LocalCryptoTypography.current.bodySmall,
-            color = colors.textTertiary,
+            text = "You can customize these anytime in settings",
+            style = typography.bodySmall,
+            color = colors.textTertiary.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
+        )
+    }
+}
+
+/**
+ * Simple bullet point for notification features.
+ */
+@Composable
+private fun NotificationBullet(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
+    
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "·",
+            style = typography.titleLarge,
+            color = colors.textSecondary
+        )
+        Text(
+            text = text,
+            style = typography.bodyMedium,
+            color = colors.textSecondary
         )
     }
 }
@@ -211,26 +204,26 @@ fun NotificationsHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Bouncing bell icon section
-        Box(
-            modifier = Modifier
-                .size(dimensions.appIconSize)
-                .offset(y = bellBounce.dp)
-                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(colors.profit, Color(0xFF14B8A6))
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.material_symbols__notifications_outline),
-                contentDescription = "Notifications",
-                tint = Color.White,
-                modifier = Modifier.size(dimensions.coinIconSize * 1f)
-            )
-
-        }
+//        Box(
+//            modifier = Modifier
+//                .size(dimensions.appIconSize)
+//                .offset(y = bellBounce.dp)
+//                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
+//                .background(
+//                    Brush.linearGradient(
+//                        colors = listOf(colors.profit, Color(0xFF14B8A6))
+//                    )
+//                ),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Icon(
+//                painter = painterResource(Res.drawable.material_symbols__notifications_outline),
+//                contentDescription = "Notifications",
+//                tint = Color.White,
+//                modifier = Modifier.size(dimensions.coinIconSize * 1f)
+//            )
+//
+//        }
         
         Spacer(modifier = Modifier.height(dimensions.smallSpacing))
         
@@ -387,18 +380,19 @@ private fun NotificationInfoCard(
     val colors = LocalCryptoColors.current
     val typography = LocalCryptoTypography.current
     val dimensions = AppTheme.dimensions
-    // React: slate-800 = #1E293B, slate-700 = #334155
-    val slateBackground = Color(0xFF1E293B).copy(alpha = 0.3f)
-    val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
-    val cardShape = RoundedCornerShape(dimensions.cardCornerRadius)
+    
+    // Glass-morphism effect
+    val glassBackground = Color(0xFF1E293B).copy(alpha = 0.2f)
+    val glassBorder = Color.White.copy(alpha = 0.1f)
+    val cardShape = RoundedCornerShape(dimensions.cardCornerRadius * 1.5f)
     
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(cardShape)
-            .background(slateBackground)
-            .border(1.dp, slateBorder, cardShape)
-            .padding(dimensions.cardPadding)
+            .background(glassBackground)
+            .border(1.dp, glassBorder, cardShape)
+            .padding(dimensions.cardPadding * 1.5f)
     ) {
         Column {
             Row(

@@ -56,8 +56,8 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 
 // React color constants: slate-800 = #1E293B, slate-700 = #334155
-private val SlateBackground = Color(0xFF1E293B)
-private val SlateBorder = Color(0xFF334155)
+//private val SlateBackground = Color(0xFF1E293B)
+//private val SlateBorder = Color(0xFF334155)
 
 /**
  * Full-size feature card with vertical layout.
@@ -99,62 +99,51 @@ fun FeatureCard(
         animationSpec = tween(durationMillis = if (reduceMotion) 0 else 300)
     )
     
-    val cardShape = RoundedCornerShape(dimensions.cardCornerRadius)
-    
-    Box(
+    // Plain layout - no container
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .alpha(alpha)
-            .clip(cardShape)
-            // React: bg-slate-800/30 - more transparent/darker
-            .background(SlateBackground.copy(alpha = 0.2f))
-            .border(
-                width = 1.dp,
-                color = SlateBorder.copy(alpha = 0.5f),
-                shape = cardShape
-            )
             .padding(dimensions.cardPadding)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
+        // Icon with softened gradient background
+        Box(
+            modifier = Modifier
+                .size(dimensions.coinIconSize * 0.9f)
+                .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
+                .background(
+                    Brush.linearGradient(
+                        feature.gradientColors.map { it.copy(alpha = 0.7f) }
+                    )
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            // Icon with rounded square background (rounded-xl = 12dp)
-            Box(
-                modifier = Modifier
-                    .size(dimensions.coinIconSize)
-                    .clip(RoundedCornerShape(dimensions.cardCornerRadius * 0.75f))
-                    .background(
-                        Brush.linearGradient(feature.gradientColors)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(feature.iconType.resource),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(dimensions.coinIconSize * 0.6f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(dimensions.itemSpacing))
-            
-            // Title
-            Text(
-                text = feature.title,
-                style = typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = colors.textPrimary
-            )
-            
-            Spacer(modifier = Modifier.height(dimensions.smallSpacing / 2))
-            
-            // Description
-            Text(
-                text = feature.description,
-                style = typography.bodySmall,
-                color = colors.textTertiary.copy(alpha = 0.8f)
+            Icon(
+                painter = painterResource(feature.iconType.resource),
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.9f),
+                modifier = Modifier.size(dimensions.coinIconSize * 0.55f)
             )
         }
+        
+        Spacer(modifier = Modifier.height(dimensions.itemSpacing))
+        
+        // Title
+        Text(
+            text = feature.title,
+            style = typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.textPrimary
+        )
+        
+        Spacer(modifier = Modifier.height(dimensions.smallSpacing / 2))
+        
+        // Description
+        Text(
+            text = feature.description,
+            style = typography.bodySmall,
+            color = colors.textTertiary.copy(alpha = 0.8f)
+        )
     }
 }
 

@@ -64,56 +64,43 @@ fun FeaturesStep(
     modifier: Modifier = Modifier
 ) {
     val dimensions = AppTheme.dimensions
+    val colors = LocalCryptoColors.current
+    val typography = LocalCryptoTypography.current
     
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensions.screenPadding),
+            .padding(horizontal = dimensions.screenPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         FeaturesHeader()
         
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 4))
         
-        // 2x2 grid of feature cards
+        // Show only 2 features - clean and focused
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+            verticalArrangement = Arrangement.spacedBy(dimensions.verticalSpacing * 2)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing),
-                modifier = Modifier.height(IntrinsicSize.Max)
-            ) {
-                FeatureCard(
-                    feature = gridFeatures[0],
-                    index = 0,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                )
-                FeatureCard(
-                    feature = gridFeatures[1],
-                    index = 1,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing),
-                modifier = Modifier.height(IntrinsicSize.Max)
-            ) {
-                FeatureCard(
-                    feature = gridFeatures[2],
-                    index = 2,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                )
-                FeatureCard(
-                    feature = gridFeatures[3],
-                    index = 3,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                )
-            }
+            FeatureCard(
+                feature = gridFeatures[0],
+                index = 0
+            )
+            FeatureCard(
+                feature = gridFeatures[1],
+                index = 1
+            )
         }
         
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 4))
         
-        FreeForeverBanner()
+        // Strengthened trust line
+        Text(
+            text = "✓ 100% free · No credit card required",
+            style = typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = colors.textSecondary.copy(alpha = 0.85f),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -134,9 +121,6 @@ fun FeaturesHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Spacer(modifier = Modifier.height(72.dp))
-        
         Text(
             text = "Everything You Need",
             style = MaterialTheme.typography.headlineMedium,

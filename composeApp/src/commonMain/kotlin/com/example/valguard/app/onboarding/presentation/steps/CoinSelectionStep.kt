@@ -65,23 +65,23 @@ fun CoinSelectionStep(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensions.cardPadding * 2),
+            .padding(horizontal = dimensions.screenPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CoinSelectionHeader()
         
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+        Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
         
         // Dynamic grid based on screen size
         val columns = dimensions.gridColumns
         val rows = (popularCoins.size + columns - 1) / columns // Ceiling division
         
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+            verticalArrangement = Arrangement.spacedBy(dimensions.itemSpacing * 1.5f)
         ) {
             for (rowIndex in 0 until rows) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing)
+                    horizontalArrangement = Arrangement.spacedBy(dimensions.itemSpacing * 1.5f)
                 ) {
                     for (colIndex in 0 until columns) {
                         val coinIndex = rowIndex * columns + colIndex
@@ -101,10 +101,6 @@ fun CoinSelectionStep(
                 }
             }
         }
-        
-        Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-        
-        //SelectionBadge(selectedCount = selectedCoins.size)
     }
 }
 
@@ -125,9 +121,6 @@ fun CoinSelectionHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Spacer(modifier = Modifier.height(56.dp))
-        
         Text(
             text = "Choose Your Favorites",
             style = typography.displayMedium,

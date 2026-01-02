@@ -30,8 +30,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +42,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -69,7 +72,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.valguard.app.onboarding.presentation.components.OnboardingBackground
 import com.example.valguard.app.onboarding.presentation.components.OnboardingButton
 import com.example.valguard.app.onboarding.presentation.components.OnboardingProgressBar
 import com.example.valguard.app.onboarding.presentation.steps.CoinSelectionStep
@@ -78,6 +80,7 @@ import com.example.valguard.app.onboarding.presentation.steps.NotificationsStep
 import com.example.valguard.app.onboarding.presentation.steps.WelcomeStep
 import com.example.valguard.theme.AppTheme
 import com.example.valguard.theme.LocalCryptoColors
+import com.example.valguard.theme.LocalCryptoTypography
 import com.example.valguard.theme.LocalCryptoTypography
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -112,169 +115,126 @@ fun OnboardingScreen(
     val stepGradient = Brush.horizontalGradient(stepColors)
     
     Box(modifier = Modifier.fillMaxSize()) {
-        // Animated background
-        OnboardingBackground()
+        // Static gradient background - clean, professional, no motion
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF020617), // slate-950 - deep top
+                            Color(0xFF0F172A), // slate-900 - lighter middle
+                            Color(0xFF1E293B), // slate-800 - subtle lift
+                            Color(0xFF0F172A)  // slate-900 - return to depth
+                        )
+                    )
+                )
+        )
         
-        // Main content
+        // Main content - no card container, content floats freely
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(dimensions.smallSpacing))
-            
-            // Progress bar at the very top
-            OnboardingProgressBar(
-                currentStep = state.currentStep,
-                stepGradient = stepGradient
-            )
-            
             Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
             
-            // Main content card - React: bg-slate-900/50 - more transparent/darker
-            val slateCardBackground = Color(0xFF0F172A).copy(alpha = 0.35f) // slate-900 with more transparency
-            val slateBorder = Color(0xFF334155).copy(alpha = 0.5f) // slate-700/50
-            val cardShape = RoundedCornerShape(dimensions.cardCornerRadius)
+            // Top navigation bar - dots + skip only (clean)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensions.screenPadding),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Empty space for balance
+                Spacer(modifier = Modifier.width(60.dp))
+                
+                // Progress dots - center
+                SimpleDotProgress(
+                    currentStep = state.currentStep,
+                    totalSteps = 4,
+                    activeColor = stepColors.first()
+                )
+                
+                // Skip button - top right (only on steps 0-2)
+                if (state.currentStep < 3) {
+                    TextButton(
+                        onClick = { viewModel.onEvent(OnboardingEvent.SkipToEnd) }
+                    ) {
+                        Text(
+                            text = "Skip",
+                            style = typography.titleMedium,
+                            color = colors.textTertiary.copy(alpha = 0.7f)
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.width(60.dp))
+                }
+            }
             
+            Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
+            
+            // Scrollable content area - no container
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = dimensions.screenPadding)
-                    .clip(cardShape)
-                     //.background(slateCardBackground)
-                    //.border(1.dp, slateBorder, cardShape)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    // Scrollable content area
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            // Step content with animated transitions
-                            AnimatedContent(
-                                targetState = state.currentStep,
-                                transitionSpec = {
-                                    if (targetState > initialState) {
-                                        slideInHorizontally { it } + fadeIn() togetherWith
-                                            slideOutHorizontally { -it } + fadeOut()
-                                    } else {
-                                        slideInHorizontally { -it } + fadeIn() togetherWith
-                                            slideOutHorizontally { it } + fadeOut()
-                                    }
-                                }
-                            ) { step ->
-                                when (step) {
-                                    0 -> WelcomeStep()
-                                    1 -> FeaturesStep()
-                                    2 -> CoinSelectionStep(
-                                        selectedCoins = state.selectedCoins,
-                                        onToggleCoin = { viewModel.onEvent(OnboardingEvent.ToggleCoin(it)) }
-                                    )
-                                    3 -> NotificationsStep(
-                                        notificationsEnabled = state.notificationsEnabled,
-                                        onToggleNotifications = { viewModel.onEvent(OnboardingEvent.ToggleNotifications) }
-                                    )
-                                }
+                    // Step content with animated transitions
+                    AnimatedContent(
+                        targetState = state.currentStep,
+                        transitionSpec = {
+                            if (targetState > initialState) {
+                                slideInHorizontally { it } + fadeIn() togetherWith
+                                    slideOutHorizontally { -it } + fadeOut()
+                            } else {
+                                slideInHorizontally { -it } + fadeIn() togetherWith
+                                    slideOutHorizontally { it } + fadeOut()
                             }
-                            
-                            Spacer(modifier = Modifier.height(dimensions.smallSpacing))
                         }
-                    }
-                    
-                    // Divider above button
-//                    HorizontalDivider(
-//                        color = Color(0xFF334155).copy(alpha = 0.5f),
-//                        thickness = 1.dp
-//                    )
-                    
-                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-
-                    // Fixed Continue button at bottom of card
-                    OnboardingButton(
-                        currentStep = state.currentStep,
-                        enabled = canProceed && !state.isTransitioning,
-                        gradient = stepGradient,
-                        onClick = { viewModel.onEvent(OnboardingEvent.NextStep) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimensions.screenPadding)
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensions.smallSpacing))
-
-                    // Back button - styled similar to Continue button but with outline style
-                    AnimatedVisibility(
-                        visible = state.currentStep > 0,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(dimensions.buttonHeight)
-                                .padding(horizontal = dimensions.screenPadding)
-                                .clip(RoundedCornerShape(dimensions.cardCornerRadius))
-                                .background(Color.Transparent)
-                                .border(
-                                    width = 2.dp,
-                                    brush = stepGradient,
-                                    shape = RoundedCornerShape(dimensions.cardCornerRadius)
-                                )
-                                .clickable { viewModel.onEvent(OnboardingEvent.PreviousStep) }
-                                .semantics {
-                                    role = androidx.compose.ui.semantics.Role.Button
-                                    contentDescription = "Back"
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Back",
-                                style = typography.labelLarge,
-                                color = Color.White
+                    ) { step ->
+                        when (step) {
+                            0 -> WelcomeStep()
+                            1 -> FeaturesStep()
+                            2 -> CoinSelectionStep(
+                                selectedCoins = state.selectedCoins,
+                                onToggleCoin = { viewModel.onEvent(OnboardingEvent.ToggleCoin(it)) }
+                            )
+                            3 -> NotificationsStep(
+                                notificationsEnabled = state.notificationsEnabled,
+                                onToggleNotifications = { viewModel.onEvent(OnboardingEvent.ToggleNotifications) }
                             )
                         }
                     }
                     
-                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+                    Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
                 }
             }
+            
+            Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
 
-            // Skip for now button - OUTSIDE the card (only on steps 0-2)
-            if (state.currentStep < 3) {
-                Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimensions.screenPadding * 2)
-                        .clip(RoundedCornerShape(dimensions.cardCornerRadius))
-                        .background(colors.textSecondary.copy(alpha = 0.1f))
-                        .clickable { viewModel.onEvent(OnboardingEvent.SkipToEnd) }
-                        .padding(vertical = dimensions.smallSpacing)
-                        .semantics {
-                            role = androidx.compose.ui.semantics.Role.Button
-                            contentDescription = "Skip onboarding"
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Skip for now",
-                        style = typography.bodyMedium,
-                        color = colors.textSecondary.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-                Spacer(modifier = Modifier.height(dimensions.screenPadding))
+            // Floating Continue button with glass-morphism
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensions.screenPadding * 2)
+            ) {
+                OnboardingButton(
+                    currentStep = state.currentStep,
+                    enabled = canProceed && !state.isTransitioning,
+                    gradient = stepGradient,
+                    onClick = { viewModel.onEvent(OnboardingEvent.NextStep) },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-
+            
+            Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
         }
         
         // Skip confirmation dialog
@@ -347,10 +307,10 @@ private fun SkipConfirmationDialog(
 }
 
 /**
- * Full-screen success animation overlay.
+ * Success overlay - quiet confidence.
  *
- * Displays after completing onboarding with an animated checkmark
- * and welcome message before navigating to the main app.
+ * Displays after completing onboarding with minimal celebration.
+ * Calm, confident, professional.
  */
 @Composable
 private fun SuccessAnimationOverlay() {
@@ -358,14 +318,10 @@ private fun SuccessAnimationOverlay() {
     val typography = LocalCryptoTypography.current
     val dimensions = AppTheme.dimensions
     
-    val scale by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(500)
-    )
-    
+    // Subtle fade in - no scale animation
     val alpha by animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(300)
+        animationSpec = tween(400)
     )
     
     Box(
@@ -375,8 +331,8 @@ private fun SuccessAnimationOverlay() {
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        colors.profit.copy(alpha = 0.9f),
-                        colors.profit.copy(alpha = 0.7f)
+                        colors.profit.copy(alpha = 0.6f),
+                        colors.profit.copy(alpha = 0.4f)
                     )
                 )
             ),
@@ -385,11 +341,10 @@ private fun SuccessAnimationOverlay() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Animated checkmark
+            // Simple checkmark - no animation
             Box(
                 modifier = Modifier
-                    .size(dimensions.appIconSize + 36.dp)
-                    .scale(scale)
+                    .size(dimensions.appIconSize)
                     .clip(CircleShape)
                     .background(Color.White),
                 contentAlignment = Alignment.Center
@@ -398,17 +353,17 @@ private fun SuccessAnimationOverlay() {
                     imageVector = Icons.Default.Check,
                     contentDescription = "Success",
                     tint = colors.profit,
-                    modifier = Modifier.size(dimensions.appIconSize * 0.6f)
+                    modifier = Modifier.size(dimensions.appIconSize * 0.5f)
                 )
             }
             
-            Spacer(modifier = Modifier.height(dimensions.verticalSpacing))
+            Spacer(modifier = Modifier.height(dimensions.verticalSpacing * 2))
             
-            // Welcome text
+            // Calm text
             Text(
-                text = "Welcome aboard!",
+                text = "You're set",
                 style = typography.displayMedium,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
@@ -416,10 +371,62 @@ private fun SuccessAnimationOverlay() {
             Spacer(modifier = Modifier.height(dimensions.smallSpacing))
             
             Text(
-                text = "Your crypto journey begins now",
+                text = "Welcome to Valguard",
                 style = typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.9f),
+                color = Color.White.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/**
+ * Simple dot progress indicator.
+ *
+ * Displays a row of dots representing each step, with the current step highlighted.
+ * Premium design with smooth animations and gradient effects.
+ *
+ * @param currentStep The current step index (0-based)
+ * @param totalSteps Total number of steps
+ * @param activeColor Color for the active step dot
+ * @param inactiveColor Color for inactive step dots
+ * @param modifier Optional modifier for the component
+ */
+@Composable
+private fun SimpleDotProgress(
+    currentStep: Int,
+    totalSteps: Int,
+    activeColor: Color,
+    inactiveColor: Color = Color.White.copy(alpha = 0.25f),
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(totalSteps) { index ->
+            val isActive = index == currentStep
+            val isPassed = index < currentStep
+            
+            // Subtle width animation - whisper progress
+            val width by animateFloatAsState(
+                targetValue = if (isActive) 20f else 8f,
+                animationSpec = tween(300)
+            )
+            
+            Box(
+                modifier = Modifier
+                    .width(width.dp)
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        when {
+                            isActive -> activeColor
+                            isPassed -> activeColor.copy(alpha = 0.4f)
+                            else -> inactiveColor
+                        }
+                    )
             )
         }
     }

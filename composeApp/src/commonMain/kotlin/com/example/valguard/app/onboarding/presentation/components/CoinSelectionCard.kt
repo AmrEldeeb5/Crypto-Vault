@@ -89,44 +89,45 @@ fun CoinSelectionCard(
     val accessibility = LocalCryptoAccessibility.current
     val reduceMotion = accessibility.reduceMotion
     
-    // Scale animation - disabled when reduce motion is enabled
+    val accessibilityDescription = "${coin.name}, ${if (isSelected) "selected" else "not selected"}"
+    
+    // Subtle scale - minimal border when unselected
     val scale = if (reduceMotion) {
-        if (isSelected) 1.05f else 1f
+        if (isSelected) 1.02f else 1f
     } else {
         val animatedScale by animateFloatAsState(
-            targetValue = if (isSelected) 1.05f else 1f,
-            animationSpec = spring(dampingRatio = 0.6f)
+            targetValue = if (isSelected) 1.02f else 1f,
+            animationSpec = spring(dampingRatio = 0.7f)
         )
         animatedScale
     }
     
-    val accessibilityDescription = "${coin.name}, ${if (isSelected) "selected" else "not selected"}"
-    // React: slate-800 = #1E293B, slate-700 = #334155
-    val slateBackground = Color(0xFF1E293B).copy(alpha = 0.2f)
-    val slateBorder = Color(0xFF334155).copy(alpha = 0.5f)
+    val cardShape = RoundedCornerShape(dimensions.cardCornerRadius * 1.5f)
     
     Box(
         modifier = modifier
             .scale(scale)
-            .clip(RoundedCornerShape(dimensions.cardCornerRadius))
+            .clip(cardShape)
             .then(
                 if (isSelected) {
-                    // Full gradient background when selected
+                    // Gradient when selected
                     Modifier.background(
                         Brush.linearGradient(coin.gradientColors)
                     )
                 } else {
-                    // React: border-slate-700/50 bg-slate-800/30
-                    Modifier
-                        .background(slateBackground)
-                        .border(2.dp, slateBorder, RoundedCornerShape(dimensions.cardCornerRadius))
+                    // Subtle border when unselected - visible but minimal
+                    Modifier.border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.15f),
+                        shape = cardShape
+                    )
                 }
             )
             .clickable {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onToggle()
             }
-            .padding(dimensions.cardPadding)
+            .padding(dimensions.cardPadding * 1.25f)
             .semantics {
                 role = Role.Checkbox
                 contentDescription = accessibilityDescription
