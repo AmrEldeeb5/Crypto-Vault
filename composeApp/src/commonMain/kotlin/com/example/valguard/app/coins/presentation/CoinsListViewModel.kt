@@ -10,9 +10,7 @@ import com.example.valguard.app.core.util.formatFiat
 import com.example.valguard.app.core.util.toUiText
 import com.example.valguard.app.portfolio.domain.PortfolioCoinModel
 import com.example.valguard.app.portfolio.domain.PortfolioRepository
-import com.example.valguard.app.realtime.domain.ConnectionState
 import com.example.valguard.app.realtime.domain.ObservePriceUpdatesUseCase
-import com.example.valguard.app.realtime.domain.PriceDirection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
@@ -80,7 +78,7 @@ class CoinsListViewModel(
                 is Result.Failure -> emptyMap()
                 null -> emptyMap()
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyMap()
         }
     }
@@ -96,13 +94,21 @@ class CoinsListViewModel(
                 val coins = coinsResponse.data.map { coinItem ->
                     val holding = portfolioHoldings[coinItem.coin.id]
                     
+                    // Format change percentage
+                    val changeValue = (coinItem.change * 100).toInt() / 100.0
+                    val formattedChange = buildString {
+                        if (coinItem.change >= 0) append("+")
+                        append(changeValue.toString())
+                        append("%")
+                    }
+
                     UiCoinListItem(
                         id = coinItem.coin.id,
                         name = coinItem.coin.name,
                         iconUrl = coinItem.coin.iconUrl,
                         symbol = coinItem.coin.symbol,
                         formattedPrice = formatFiat(coinItem.price),
-                        formattedChange = "${if (coinItem.change >= 0) "+" else ""}${String.format("%.2f", coinItem.change)}%",
+                        formattedChange = formattedChange,
                         isPositive = coinItem.change >= 0,
                         holdingsAmount = holding?.let { 
                             "${it.ownedAmountInUnit.formatCrypto()} ${coinItem.coin.symbol}"
