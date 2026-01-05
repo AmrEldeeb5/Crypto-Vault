@@ -137,7 +137,6 @@ fun CoinDetailScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colors.backgroundPrimary)
-                    .statusBarsPadding()
                     .padding(paddingValues)
             ) {
                 // Top bar (Compact Navigation Row)
