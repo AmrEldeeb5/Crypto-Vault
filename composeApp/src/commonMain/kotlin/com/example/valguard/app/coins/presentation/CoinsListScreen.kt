@@ -17,11 +17,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.valguard.app.coins.presentation.component.PerformanceChart
@@ -94,7 +96,7 @@ fun CoinsListContent(
 
         if (state.chartState != null) {
             CoinChartDialog(
-                uiChartState = state.chartState,
+                chartState = state.chartState,
                 onDismiss = onDismissChart
             )
         }
@@ -171,7 +173,7 @@ private fun UiCoinListItem.toUiCoinItem(): UiCoinItem {
 
 @Composable
 fun CoinChartDialog(
-    uiChartState: UiChartState,
+    chartState: ChartState,
     onDismiss: () -> Unit,
 ) {
     val colors = LocalCryptoColors.current
@@ -181,39 +183,65 @@ fun CoinChartDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "24h Price chart for ${uiChartState.coinName}",
+                text = "24h Price chart for ${chartState.coinName}",
             )
         },
         text = {
-            if (uiChartState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(32.dp))
+            when (chartState) {
+                is ChartState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                    }
                 }
-            } else if (uiChartState.error != null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = uiChartState.error,
-                        color = colors.statusError
+                is ChartState.Success -> {
+                    PerformanceChart(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(16.dp),
+                        nodes = chartState.sparkLine,
+                        profitColor = colors.profit,
+                        lossColor = colors.loss,
+                        symbol = chartState.coinSymbol,
+                        changePercent = chartState.changePercent
                     )
                 }
-            } else {
-                PerformanceChart(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(16.dp),
-                    nodes = uiChartState.sparkLine,
-                    profitColor = colors.profit,
-                    lossColor = colors.loss,
-                    symbol = uiChartState.coinSymbol,
-                    changePercent = uiChartState.changePercent
-                )
+                is ChartState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = chartState.message,
+                            color = colors.statusError
+                        )
+                    }
+                }
+                is ChartState.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "No chart data available",
+                                color = colors.textSecondary
+                            )
+                            Text(
+                                text = "This may be a stablecoin or data is temporarily unavailable",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colors.textSecondary.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
             }
         },
         confirmButton = {},

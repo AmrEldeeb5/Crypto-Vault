@@ -1,16 +1,11 @@
 This is a Kotlin Multiplatform project targeting Android, iOS.
 
-Data Disclaimer
+## Data Source
 
-This project uses real market data from the Coinranking API.
-Certain advanced metrics (ATH, supply, historical extremes) are not provided by the API and are mocked for demonstration purposes only.
-The architecture is designed to support replacing mock sources with real APIs (e.g. CoinGecko) without UI refactoring.
-
-## Setup
-
-### API Key Configuration
-
-Before running the application, you need to configure your CoinRanking API key. See [API_KEY_SETUP.md](./API_KEY_SETUP.md) for detailed instructions.
+This project uses real market data from the CoinGecko API with a cache-first architecture:
+- All cryptocurrency data is fetched from CoinGecko's public API
+- Data is cached locally in Room database for offline support
+- Cache is refreshed when data is older than 5 minutes
 
 ## Project Structure
 

@@ -657,10 +657,13 @@ private fun EnhancedStatCard(
 
 @Composable
 private fun RangeCard(
-    high: Double,
-    low: Double,
+    high: Double?,
+    low: Double?,
     currentPrice: Double
 ) {
+    // Don't show range card if data is missing
+    if (high == null || low == null) return
+    
     val colors = LocalCryptoColors.current
     val spacing = LocalCryptoSpacing.current
     
@@ -1104,7 +1107,8 @@ private fun OfflineBanner(modifier: Modifier = Modifier) {
 
 // Utility functions
 
-private fun formatPrice(price: Double): String {
+private fun formatPrice(price: Double?): String {
+    if (price == null) return "N/A"
     return when {
         price >= 1000 -> formatDecimal(price, 2)
         price >= 1 -> formatDecimal(price, 2)
@@ -1121,7 +1125,8 @@ private fun formatAmount(amount: Double): String {
     }
 }
 
-private fun formatLargeNumber(number: Double): String {
+private fun formatLargeNumber(number: Double?): String {
+    if (number == null) return "N/A"
     return when {
         number >= 1_000_000_000_000 -> "${formatDecimal(number / 1_000_000_000_000, 2)}T"
         number >= 1_000_000_000 -> "${formatDecimal(number / 1_000_000_000, 2)}B"
@@ -1142,7 +1147,8 @@ private fun formatLargeNumberWithSuffix(text: String): Pair<String, String> {
     }
 }
 
-private fun formatSupply(supply: Double, symbol: String): String {
+private fun formatSupply(supply: Double?, symbol: String): String {
+    if (supply == null) return "N/A"
     val formatted = when {
         supply >= 1_000_000_000 -> "${formatDecimal(supply / 1_000_000_000, 1)}B"
         supply >= 1_000_000 -> "${formatDecimal(supply / 1_000_000, 1)}M"

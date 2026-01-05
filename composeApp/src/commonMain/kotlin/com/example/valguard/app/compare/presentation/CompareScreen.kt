@@ -456,8 +456,8 @@ private fun ComparisonTable(
                         "${formatPercentage(coin2.change24h)}%", 
                         comparisonData.change24hWinner,
                         isChange = true,
-                        pos1 = coin1.change24h > 0,
-                        pos2 = coin2.change24h > 0
+                        pos1 = (coin1.change24h ?: 0.0) > 0,
+                        pos2 = (coin2.change24h ?: 0.0) > 0
                     )
                 },
                 "Market Cap" to {
@@ -646,17 +646,17 @@ private fun MetricValues(
     isRank: Boolean = false,
     pos1: Boolean = true,
     pos2: Boolean = true,
-    raw1: Double = 0.0,
-    raw2: Double = 0.0,
+    raw1: Double? = 0.0,
+    raw2: Double? = 0.0,
     showBar: Boolean = false
 ) {
     val colors = LocalCryptoColors.current
     val spacing = LocalCryptoSpacing.current
 
     // Calculate bar fractions relative to max
-    val maxVal = maxOf(raw1, raw2).coerceAtLeast(1.0)
-    val frac1 = (raw1 / maxVal).toFloat().coerceIn(0f, 1f)
-    val frac2 = (raw2 / maxVal).toFloat().coerceIn(0f, 1f)
+    val maxVal = maxOf(raw1 ?: 0.0, raw2 ?: 0.0).coerceAtLeast(1.0)
+    val frac1 = ((raw1 ?: 0.0) / maxVal).toFloat().coerceIn(0f, 1f)
+    val frac2 = ((raw2 ?: 0.0) / maxVal).toFloat().coerceIn(0f, 1f)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -957,17 +957,11 @@ private fun CoinSelectorModal(
     val colors = LocalCryptoColors.current
     val spacing = LocalCryptoSpacing.current
     
-    // Mock coin list (in real app, would come from repository)
-    val coins = listOf(
-        CoinOption("bitcoin", "Bitcoin", "BTC", "https://assets.coingecko.com/coins/images/1/large/bitcoin.png"),
-        CoinOption("ethereum", "Ethereum", "ETH", "https://assets.coingecko.com/coins/images/279/large/ethereum.png"),
-        CoinOption("solana", "Solana", "SOL", "https://assets.coingecko.com/coins/images/4128/large/solana.png"),
-        CoinOption("cardano", "Cardano", "ADA", "https://assets.coingecko.com/coins/images/975/large/cardano.png"),
-        CoinOption("dogecoin", "Dogecoin", "DOGE", "https://assets.coingecko.com/coins/images/5/large/dogecoin.png"),
-        CoinOption("ripple", "XRP", "XRP", "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png"),
-        CoinOption("polkadot", "Polkadot", "DOT", "https://assets.coingecko.com/coins/images/12171/large/polkadot.png"),
-        CoinOption("avalanche-2", "Avalanche", "AVAX", "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png")
-    )
+    val viewModel = koinViewModel<CompareViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    
+    // Use real coins from repository
+    val coins = state.availableCoins
     
     val filteredCoins = if (searchQuery.isEmpty()) {
         coins
@@ -1035,13 +1029,6 @@ private fun CoinSelectorModal(
     }
 }
 
-private data class CoinOption(
-    val id: String,
-    val name: String,
-    val symbol: String,
-    val iconUrl: String
-)
-
 @Composable
 private fun CoinOptionItem(
     coin: CoinOption,
@@ -1083,7 +1070,8 @@ private fun CoinOptionItem(
     }
 }
 
-private fun formatPrice(price: Double): String {
+private fun formatPrice(price: Double?): String {
+    if (price == null) return "N/A"
     return if (price >= 1) {
         "\$${formatDecimal(price, 2)}"
     } else {
@@ -1091,12 +1079,14 @@ private fun formatPrice(price: Double): String {
     }
 }
 
-private fun formatPercentage(value: Double): String {
+private fun formatPercentage(value: Double?): String {
+    if (value == null) return "N/A"
     val sign = if (value > 0) "+" else ""
     return "$sign${formatDecimal(value, 2)}"
 }
 
-private fun formatLargeNumber(value: Double): String {
+private fun formatLargeNumber(value: Double?): String {
+    if (value == null) return "N/A"
     return when {
         value >= 1_000_000_000_000 -> "\$${formatDecimal(value / 1_000_000_000_000, 2)}T"
         value >= 1_000_000_000 -> "\$${formatDecimal(value / 1_000_000_000, 2)}B"

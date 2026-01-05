@@ -1,11 +1,11 @@
 package com.example.valguard.app.di
 
 import com.example.valguard.app.coindetail.presentation.CoinDetailViewModel
-import com.example.valguard.app.coins.data.remote.impl.KtorCoinsRemoteDataSource
+import com.example.valguard.app.coins.data.remote.impl.CoinGeckoRemoteDataSource
+import com.example.valguard.app.coins.data.repository.CoinGeckoRepository
 import com.example.valguard.app.coins.domain.usecase.GetCoinDetailsUseCase
 import com.example.valguard.app.coins.domain.usecase.GetCoinPriceHistoryUseCase
 import com.example.valguard.app.coins.domain.usecase.GetCoinsListUseCase
-import com.example.valguard.app.coins.domain.api.CoinsRemoteDataSource
 import com.example.valguard.app.coins.presentation.CoinsListViewModel
 import com.example.valguard.app.compare.data.ComparisonRepository
 import com.example.valguard.app.compare.presentation.CompareViewModel
@@ -80,7 +80,12 @@ val sharedModule = module {
     }
 
     // data sources
-    single<CoinsRemoteDataSource> { KtorCoinsRemoteDataSource(get()) }
+    single { CoinGeckoRemoteDataSource(get()) }
+
+    // CoinGecko repository (cache-first)
+    single { get<PortfolioDatabase>().coinDao() }
+    single { get<PortfolioDatabase>().coinDetailDao() }
+    single { CoinGeckoRepository(get(), get(), get()) }
 
     // portfolio
     single { getPortfolioDatabase(get()) }
@@ -125,8 +130,8 @@ val sharedModule = module {
     viewModel { PortfolioViewModel(get(), get()) }
     viewModel { (coinId: String) -> BuyViewModel(coinId, get(), get(), get(), get()) }
     viewModel { (coinId: String) -> SellViewModel(coinId, get(), get(), get(), get()) }
-    viewModelOf(::CoinDetailViewModel)
-    viewModel { DCAViewModel(get()) }
-    viewModel { CompareViewModel(get()) }
+    viewModel { CoinDetailViewModel(get(), get(), get(), get(), get()) }
+    viewModel { DCAViewModel(get(), get()) }
+    viewModel { CompareViewModel(get(), get()) }
     viewModel { OnboardingViewModel(get()) }
 }

@@ -1,12 +1,10 @@
 package com.example.valguard.app.portfolio.data
 
 
-import com.example.valguard.app.coins.domain.api.CoinsRemoteDataSource
+import com.example.valguard.app.coins.data.repository.CoinGeckoRepository
 import com.example.valguard.app.core.domain.DataError
 import com.example.valguard.app.core.domain.EmptyResult
 import com.example.valguard.app.core.domain.Result
-import com.example.valguard.app.core.domain.onError
-import com.example.valguard.app.core.domain.onSuccess
 import com.example.valguard.app.portfolio.data.local.PortfolioCoinEntity
 import com.example.valguard.app.portfolio.data.local.PortfolioDao
 import com.example.valguard.app.portfolio.data.local.UserBalanceDao
@@ -24,7 +22,7 @@ import kotlinx.coroutines.flow.flow
 class PortfolioRepositoryImpl(
     private val portfolioDao: PortfolioDao,
     private val userBalanceDao: UserBalanceDao,
-    private val coinsRemoteDataSource: CoinsRemoteDataSource,
+    private val coinGeckoRepository: CoinGeckoRepository,
 ) : PortfolioRepository {
 
     override suspend fun initializeBalance() {
@@ -38,46 +36,51 @@ class PortfolioRepositoryImpl(
 
     override fun allPortfolioCoinsFlow(): Flow<Result<List<PortfolioCoinModel>, DataError.Remote>> {
         return flow {
-            val portfolioCoinsEntities = portfolioDao.getAllOwnedCoins()
-            if (portfolioCoinsEntities.isEmpty()) {
-                emit(Result.Success(emptyList()))
-            } else {
-                coinsRemoteDataSource.getListOfCoins()
-                    .onError { error ->
-                        emit(Result.Failure(error))
+            try {
+                val portfolioCoinsEntities = portfolioDao.getAllOwnedCoins()
+                if (portfolioCoinsEntities.isEmpty()) {
+                    emit(Result.Success(emptyList()))
+                } else {
+                    // Refresh coins from CoinGecko if stale
+                    if (coinGeckoRepository.isCacheStale()) {
+                        coinGeckoRepository.refreshCoins()
                     }
-                    .onSuccess { coinsDto ->
-                        val portfolioCoins = portfolioCoinsEntities.mapNotNull { entity: PortfolioCoinEntity ->
-                            val coin = coinsDto.data.coins.find { it.uuid == entity.coinId }
-                            coin?.let {
-                                val price = it.price?.toDoubleOrNull() ?: 0.0
-                                entity.toPortfolioCoinModel(price)
-                            }
+                    
+                    // Get coins from cache
+                    val coinIds = portfolioCoinsEntities.map { it.coinId }
+                    val coins = coinGeckoRepository.getCoinsByIds(coinIds)
+                    
+                    val portfolioCoins = portfolioCoinsEntities.mapNotNull { entity: PortfolioCoinEntity ->
+                        val coin = coins.find { it.id == entity.coinId }
+                        coin?.let {
+                            val price = it.currentPrice ?: 0.0
+                            entity.toPortfolioCoinModel(price)
                         }
-                        emit(Result.Success(portfolioCoins))
                     }
+                    emit(Result.Success(portfolioCoins))
+                }
+            } catch (e: Exception) {
+                emit(Result.Failure(DataError.Remote.UNKNOWN_ERROR))
             }
-        }.catch {
-            emit(Result.Failure(DataError.Remote.UNKNOWN_ERROR))
         }
     }
 
     override suspend fun getPortfolioCoin(coinId: String): Result<PortfolioCoinModel?, DataError.Remote> {
-        coinsRemoteDataSource.getCoinById(coinId)
-            .onError { error ->
-                return Result.Failure(error)
-            }
-            .onSuccess { coinDto ->
-                val portfolioCoinEntity = portfolioDao.getCoinById(coinId)
-                val coinDetails = coinDto.data.coin
-                val price = coinDetails.price?.toDoubleOrNull() ?: 0.0
-                return if (portfolioCoinEntity != null) {
-                    Result.Success(portfolioCoinEntity.toPortfolioCoinModel(price))
-                } else {
-                    Result.Success(null)
-                }
-            }
-        return Result.Failure(DataError.Remote.UNKNOWN_ERROR)
+        // Refresh coin detail from CoinGecko
+        coinGeckoRepository.refreshCoinDetail(coinId)
+        
+        // Get coin from cache
+        val coin = coinGeckoRepository.getCoin(coinId)
+        val portfolioCoinEntity = portfolioDao.getCoinById(coinId)
+        
+        return if (coin != null && portfolioCoinEntity != null) {
+            val price = coin.currentPrice ?: 0.0
+            Result.Success(portfolioCoinEntity.toPortfolioCoinModel(price))
+        } else if (portfolioCoinEntity == null) {
+            Result.Success(null)
+        } else {
+            Result.Failure(DataError.Remote.UNKNOWN_ERROR)
+        }
     }
 
     override suspend fun savePortfolioCoin(portfolioCoin: PortfolioCoinModel): EmptyResult<DataError.Local> {
@@ -95,24 +98,29 @@ class PortfolioRepositoryImpl(
 
     override fun calculateTotalPortfolioValue(): Flow<Result<Double, DataError.Remote>> {
         return flow {
-            val portfolioCoinsEntities = portfolioDao.getAllOwnedCoins()
-            if (portfolioCoinsEntities.isEmpty()) {
-                emit(Result.Success(0.0))
-            } else {
-                coinsRemoteDataSource.getListOfCoins()
-                    .onError { error ->
-                        emit(Result.Failure(error))
+            try {
+                val portfolioCoinsEntities = portfolioDao.getAllOwnedCoins()
+                if (portfolioCoinsEntities.isEmpty()) {
+                    emit(Result.Success(0.0))
+                } else {
+                    // Refresh coins from CoinGecko if stale
+                    if (coinGeckoRepository.isCacheStale()) {
+                        coinGeckoRepository.refreshCoins()
                     }
-                    .onSuccess { coinsDto ->
-                        val totalValue = portfolioCoinsEntities.sumOf { entity: PortfolioCoinEntity ->
-                            val coinPrice = coinsDto.data.coins.find { it.uuid == entity.coinId }?.price?.toDoubleOrNull() ?: 0.0
-                            entity.amountOwned * coinPrice
-                        }
-                        emit(Result.Success(totalValue))
+                    
+                    // Get coins from cache
+                    val coinIds = portfolioCoinsEntities.map { it.coinId }
+                    val coins = coinGeckoRepository.getCoinsByIds(coinIds)
+                    
+                    val totalValue = portfolioCoinsEntities.sumOf { entity: PortfolioCoinEntity ->
+                        val coinPrice = coins.find { it.id == entity.coinId }?.currentPrice ?: 0.0
+                        entity.amountOwned * coinPrice
                     }
+                    emit(Result.Success(totalValue))
+                }
+            } catch (e: Exception) {
+                emit(Result.Failure(DataError.Remote.UNKNOWN_ERROR))
             }
-        }.catch {
-            emit(Result.Failure(DataError.Remote.UNKNOWN_ERROR))
         }
     }
 

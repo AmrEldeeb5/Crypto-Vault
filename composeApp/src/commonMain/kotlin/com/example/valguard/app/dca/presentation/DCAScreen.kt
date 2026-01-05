@@ -55,15 +55,21 @@ fun DCAScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalCryptoColors.current
     
-    // TODO: Get coins from CoinsViewModel or repository
-    val mockCoins = remember {
-        listOf(
-            UiCoinItem("bitcoin", "Bitcoin", "BTC", "https://assets.coingecko.com/coins/images/1/large/bitcoin.png", "$0.00", "0.00%", 0.0, false, PriceDirection.UNCHANGED),
-            UiCoinItem("ethereum", "Ethereum", "ETH", "https://assets.coingecko.com/coins/images/279/large/ethereum.png", "$0.00", "0.00%", 0.0, false, PriceDirection.UNCHANGED),
-            UiCoinItem("tether", "Tether", "USDT", "https://assets.coingecko.com/coins/images/325/large/Tether.png", "$0.00", "0.00%", 0.0, false, PriceDirection.UNCHANGED),
-            UiCoinItem("usd-coin", "USD Coin", "USDC", "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png", "$0.00", "0.00%", 0.0, false, PriceDirection.UNCHANGED),
-            UiCoinItem("binancecoin", "BNB", "BNB", "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png", "$0.00", "0.00%", 0.0, false, PriceDirection.UNCHANGED)
-        )
+    // Convert available coins to UiCoinItem for the selector
+    val selectorCoins = remember(state.availableCoins) {
+        state.availableCoins.map { coin ->
+            UiCoinItem(
+                id = coin.id,
+                name = coin.name,
+                symbol = coin.symbol,
+                iconUrl = coin.iconUrl,
+                formattedPrice = coin.price?.let { "$${String.format("%.2f", it)}" } ?: "-",
+                formattedChange = "-",
+                changePercent = 0.0,
+                isPositive = true,
+                priceDirection = PriceDirection.UNCHANGED
+            )
+        }
     }
     
     Scaffold(
@@ -162,7 +168,7 @@ fun DCAScreen(
     
     if (state.showCoinSelector) {
         CoinSelectorBottomSheet(
-            coins = mockCoins,
+            coins = selectorCoins,
             onDismiss = { viewModel.onEvent(DCAEvent.HideCoinSelector) },
             onCoinSelected = { id, name, symbol, iconUrl ->
                 viewModel.onEvent(DCAEvent.SelectCoin(id, name, symbol, iconUrl))
