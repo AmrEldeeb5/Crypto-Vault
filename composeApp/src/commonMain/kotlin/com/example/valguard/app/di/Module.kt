@@ -15,6 +15,7 @@ import com.example.valguard.app.core.network.HttpClientFactory
 import com.example.valguard.app.dca.data.DCARepository
 import com.example.valguard.app.dca.presentation.DCAViewModel
 import com.example.valguard.app.onboarding.data.OnboardingRepository
+import com.example.valguard.app.onboarding.data.OnboardingRepositoryImpl
 import com.example.valguard.app.onboarding.presentation.OnboardingViewModel
 import com.example.valguard.app.portfolio.data.PortfolioRepositoryImpl
 import com.example.valguard.app.portfolio.domain.PortfolioRepository
@@ -97,8 +98,11 @@ val sharedModule = module {
     single { get<PortfolioDatabase>().watchlistDao() }
     singleOf(::WatchlistRepositoryImpl).bind<WatchlistRepository>()
     
+    // preferences
+    single { get<PortfolioDatabase>().preferenceDao() }
+    
     // onboarding
-    single { OnboardingRepository(get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get()) }
     
     // DCA
     single { get<PortfolioDatabase>().dcaScheduleDao() }

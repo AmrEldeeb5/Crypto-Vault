@@ -39,9 +39,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -176,9 +178,9 @@ fun CoinSelectionCard(
 
             Spacer(modifier = Modifier.height(dimensions.smallSpacing))
 
-            // Coin symbol
-            Text(
-                text = coin.symbol,
+            // Coin name (Primary, Large)
+            AutoResizingText(
+                text = coin.name,
                 style = typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = if (isSelected) Color.White else colors.textPrimary,
@@ -187,15 +189,64 @@ fun CoinSelectionCard(
 
             Spacer(modifier = Modifier.height(dimensions.smallSpacing / 2))
 
-            // Coin name
-            Text(
-                text = coin.name,
+            // Coin symbol (Secondary, Small)
+            AutoResizingText(
+                text = coin.symbol,
                 style = typography.bodySmall,
                 color = if (isSelected) Color.White.copy(alpha = 0.8f) else colors.textSecondary,
                 modifier = Modifier.align(Alignment.Start)
             )
         }
     }
+}
+
+/**
+ * Text composable that automatically scales down its font size to fit within one line.
+ *
+ * @param text The text to display
+ * @param style The initial text style
+ * @param modifier The modifier to apply to the text
+ * @param color The color of the text
+ * @param fontWeight The font weight of the text
+ */
+@Composable
+private fun AutoResizingText(
+    text: String,
+    style: androidx.compose.ui.text.TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    fontWeight: FontWeight? = null
+) {
+    var resizedStyle by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(style) }
+    var shouldDraw by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    val defaultFontSize = style.fontSize
+
+    Text(
+        text = text,
+        color = color,
+        modifier = modifier.drawWithContent {
+            if (shouldDraw) {
+                drawContent()
+            }
+        },
+        softWrap = false,
+        style = resizedStyle.copy(
+            fontWeight = fontWeight ?: style.fontWeight
+        ),
+        onTextLayout = { result ->
+            if (result.didOverflowWidth) {
+                if (resizedStyle.fontSize.value > 8f) { // Minimum font size check
+                    val newSize = resizedStyle.fontSize * 0.9f
+                    resizedStyle = resizedStyle.copy(fontSize = newSize)
+                } else {
+                    shouldDraw = true // Too small, just draw it
+                }
+            } else {
+                shouldDraw = true
+            }
+        }
+    )
 }
 
 

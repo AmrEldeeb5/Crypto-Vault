@@ -22,6 +22,9 @@ import com.example.valguard.app.watchlist.data.local.WatchlistDao
 import com.example.valguard.app.watchlist.data.local.WatchlistEntity
 
 
+import com.example.valguard.app.core.database.preferences.PreferenceDao
+import com.example.valguard.app.core.database.preferences.PreferenceEntity
+
 @Database(
     entities = [
         PortfolioCoinEntity::class,
@@ -31,9 +34,10 @@ import com.example.valguard.app.watchlist.data.local.WatchlistEntity
         DCAExecutionEntity::class,
         SavedComparisonEntity::class,
         CoinEntity::class,
-        CoinDetailEntity::class
+        CoinDetailEntity::class,
+        PreferenceEntity::class
     ],
-    version = 6
+    version = 7
 )
 @TypeConverters(Converters::class)
 abstract class PortfolioDatabase: RoomDatabase() {
@@ -45,4 +49,5 @@ abstract class PortfolioDatabase: RoomDatabase() {
     abstract fun savedComparisonDao(): SavedComparisonDao
     abstract fun coinDao(): CoinDao
     abstract fun coinDetailDao(): CoinDetailDao
+    abstract fun preferenceDao(): PreferenceDao
 }

@@ -83,6 +83,7 @@ import org.jetbrains.compose.resources.painterResource
 import valguard.composeapp.generated.resources.Res
 import valguard.composeapp.generated.resources.solar__bookmark_bold
 import valguard.composeapp.generated.resources.solar__bookmark_linear
+import valguard.composeapp.generated.resources.solar__trash_bin_minimalistic_outline
 
 // Locked row height for consistent spacing
 private val ComparisonRowHeight = 56.dp
@@ -1000,7 +1001,7 @@ private fun SavedComparisonCard(
                     .background(colors.loss.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
             ) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
+                    painter = painterResource(Res.drawable.solar__trash_bin_minimalistic_outline),
                     contentDescription = "Delete",
                     tint = colors.loss,
                     modifier = Modifier.size(16.dp)
