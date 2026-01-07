@@ -260,17 +260,5 @@ For questions or feedback about this project, feel free to open an issue.
 
 ---
 
-## 🛣️ Roadmap
-
-- [ ] iOS App Store release
-- [ ] Android Play Store release
-- [ ] Push notifications for price alerts
-- [ ] Biometric authentication
-- [ ] Light theme support
-- [ ] Multi-currency support
-- [ ] Export transaction history
-
----
-
 **Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)**
 
