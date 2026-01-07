@@ -256,7 +256,7 @@ For questions or feedback about this project, feel free to open an issue.
 
 ## 📸 Screenshots
 
-> Add screenshots of your app here to showcase the UI
+> 
 
 ---
 
