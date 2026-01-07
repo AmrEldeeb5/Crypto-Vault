@@ -55,7 +55,6 @@ import com.example.valguard.app.components.UiCoinItem
 import com.example.valguard.app.components.activeCount
 import com.example.valguard.app.dca.presentation.DCAScreen
 import com.example.valguard.app.navigation.ScrollBehaviorState
-import com.example.valguard.app.navigation.animatedVisibilityFraction
 import com.example.valguard.app.navigation.rememberScrollBehaviorState
 import com.example.valguard.app.portfolio.presentation.PortfolioViewModel
 import com.example.valguard.app.portfolio.presentation.UiPortfolioCoinItem
@@ -105,16 +104,7 @@ fun MainScreen(
         }
     }
     
-    // Animated offsets for smooth hide/show
-    val visibilityFraction = scrollBehaviorState.animatedVisibilityFraction()
-    val headerOffset by animateDpAsState(
-        targetValue = if (scrollBehaviorState.isVisible) 0.dp else (-200).dp, // Increased to fully hide header + tabs
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "HeaderOffset"
-    )
+    // Animated offset for smooth bottom navigation hide/show
     val bottomNavOffset by animateDpAsState(
         targetValue = if (scrollBehaviorState.isVisible) 0.dp else 120.dp, // Increased to fully hide bottom nav
         animationSpec = spring(
@@ -239,44 +229,60 @@ fun MainScreen(
         }
         
         // Header overlay (on top of content)
+        // Uses animated height with clipToBounds so the entire header area (including background)
+        // properly disappears when scrolling down, rather than just offsetting the content
         if (activeBottomNav == BottomNavItem.MARKET || activeBottomNav == BottomNavItem.PORTFOLIO) {
-            Column(
+            val headerHeight by animateDpAsState(
+                targetValue = if (scrollBehaviorState.isVisible) 170.dp else 0.dp,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
+                ),
+                label = "HeaderHeight"
+            )
+            
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(headerHeight)
                     .align(Alignment.TopStart)
-                    .background(colors.backgroundPrimary) // Background moves with header
-                    .offset(y = headerOffset)
+                    .clipToBounds() // Clip content that overflows when height shrinks
+                    .background(colors.backgroundPrimary)
             ) {
-                // Search placeholder logic
-                val searchPlaceholder = when (activeTab) {
-                    Tab.PORTFOLIO -> "Search your assets"
-                    else -> "Search cryptocurrencies"
-                }
-
-                // Header with integrated search
-                ValguardHeader(
-                    searchQuery = coinsState.searchQuery,
-                    onSearchQueryChange = { coinsViewModel.onSearchQueryChange(it) },
-                    placeholder = searchPlaceholder,
-                    alertCount = alerts.activeCount(),
-                    onAlertClick = { showAlertModal = true },
-                    onMoreClick = { showMoreMenu = true }
-                )
-
-                // Tab navigation
-                TabNavigation(
-                    activeTab = activeTab,
-                    onTabSelected = { tab ->
-                        activeTab = tab
-                        activeBottomNav = when (tab) {
-                            Tab.MARKET -> BottomNavItem.MARKET
-                            Tab.PORTFOLIO -> BottomNavItem.PORTFOLIO
-                            Tab.WATCHLIST -> activeBottomNav
-                        }
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Search placeholder logic
+                    val searchPlaceholder = when (activeTab) {
+                        Tab.PORTFOLIO -> "Search your assets"
+                        else -> "Search cryptocurrencies"
                     }
-                )
 
-                Spacer(modifier = Modifier.height(spacing.sm))
+                    // Header with integrated search
+                    ValguardHeader(
+                        searchQuery = coinsState.searchQuery,
+                        onSearchQueryChange = { coinsViewModel.onSearchQueryChange(it) },
+                        placeholder = searchPlaceholder,
+                        alertCount = alerts.activeCount(),
+                        onAlertClick = { showAlertModal = true },
+                        onMoreClick = { showMoreMenu = true }
+                    )
+
+                    // Tab navigation
+                    TabNavigation(
+                        activeTab = activeTab,
+                        onTabSelected = { tab ->
+                            activeTab = tab
+                            activeBottomNav = when (tab) {
+                                Tab.MARKET -> BottomNavItem.MARKET
+                                Tab.PORTFOLIO -> BottomNavItem.PORTFOLIO
+                                Tab.WATCHLIST -> activeBottomNav
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(spacing.sm))
+                }
             }
         }
 
